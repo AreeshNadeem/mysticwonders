@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { T } from '../lib/constants';
 import Navbar from '../components/layout/Navbar';
 import useCartStore from '../store/cartStore';
+import useAuthStore from '../store/authStore';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 const PAYMENT_OPTIONS = [
   { id: 'cod', name: 'Cash on delivery', sub: 'pay when your order arrives' },
@@ -22,15 +25,52 @@ export default function Checkout() {
   const items = useCartStore((s) => s.items);
   const subtotal = useCartStore((s) => s.subtotal());
   const clearCart = useCartStore((s) => s.clearCart);
+  const user = useAuthStore((s) => s.user);
+  
   const delivery = 150;
   const total = subtotal + delivery;
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
 
   const [payment, setPayment] = useState('cod');
   const [fields, setFields] = useState({ name: '', phone: '', city: '', address: '' });
 
-  const placeOrder = () => {
-    clearCart();
-    navigate('/order/MW-2026-0847');
+  const placeOrder = async () => {
+    setFormError('');
+    if (items.length === 0) {
+      setFormError('Your magic bag is empty! Add an item first.');
+      return;
+    }
+    if (!fields.name || !fields.phone || !fields.city || !fields.address) {
+      setFormError('Please fill out all delivery details to proceed.');
+      return;
+    }
+    if (submitting) return;
+
+    setSubmitting(true);
+    
+    const orderData = {
+      userId: user ? user.uid : 'guest',
+      items,
+      deliveryDetails: fields,
+      paymentMethod: payment,
+      subtotal,
+      deliveryFee: delivery,
+      total,
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    };
+    
+    try {
+      const docRef = await addDoc(collection(db, 'orders'), orderData);
+      clearCart();
+      navigate(`/order/${docRef.id}`);
+    } catch (e) {
+      console.error("Error creating order", e);
+      alert("Failed to submit order. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -53,7 +93,7 @@ export default function Checkout() {
             ))}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1.1fr) minmax(350px, 0.9fr)', gap: 'clamp(60px, 10vw, 150px)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))', gap: 'clamp(40px, 8vw, 150px)' }}>
             {/* Left Column: Form */}
             <div>
               <div style={{ marginBottom: 30 }}>
@@ -108,7 +148,7 @@ export default function Checkout() {
                 <div style={{ height: '0.5px', background: '#EDD0D6', margin: '20px 0' }} />
 
                 <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
-                  <input className="coupon-input" placeholder="enter coupon code" />
+                  <input className="coupon-input" placeholder="Enter coupon code" />
                   <button style={{ background: 'transparent', border: `0.5px solid ${T.borderMuted}`, borderRadius: 12, padding: '11px 16px', fontFamily: 'EB Garamond, serif', fontSize: 14, color: T.textAccent, cursor: 'pointer', whiteSpace: 'nowrap' }}>Apply</button>
                 </div>
 
@@ -136,8 +176,15 @@ export default function Checkout() {
       {/* Sticky Bottom Bar */}
       <div className="sticky-bar">
         <div className="sticky-bar-inner">
-          <button className="btn-primary" style={{ padding: '18px' }} onClick={placeOrder}>✦ &nbsp; Place order — Rs {total}</button>
-          <div style={{ textAlign: 'center', marginTop: 12, fontFamily: 'EB Garamond, serif', fontSize: 12, color: T.textMuted, letterSpacing: '0.04em', fontStyle: 'italic' }}>your details are safe with us ✦</div>
+          {formError && (
+            <div style={{ padding: '12px 16px', background: '#FFEDF0', color: T.burgundyDeep, borderRadius: 12, marginBottom: 16, fontFamily: 'EB Garamond, serif', fontSize: 15, border: '0.5px solid #E8C4CC', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 18 }}>✦</span> {formError}
+            </div>
+          )}
+          <button className="btn-primary hover-scale" style={{ padding: '18px' }} onClick={placeOrder} disabled={submitting}>
+            {submitting ? '✦ Processing ✦' : `✦   Place order — Rs ${total}`}
+          </button>
+          <div style={{ textAlign: 'center', marginTop: 12, fontFamily: 'EB Garamond, serif', fontSize: 12, color: T.textMuted, letterSpacing: '0.04em', fontStyle: 'italic' }}>Your details are safe with us ✦</div>
         </div>
       </div>
     </div>

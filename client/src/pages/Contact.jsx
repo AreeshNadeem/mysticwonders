@@ -1,15 +1,28 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 import { T } from '../lib/constants';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    try {
+      await addDoc(collection(db, 'messages'), {
+        ...formData,
+        read: false,
+        createdAt: new Date().toISOString()
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      alert("Failed to send. Please ensure Firestore is enabled.");
+    }
   };
 
   return (
@@ -18,17 +31,17 @@ export default function Contact() {
       
       <div className="content-wrap" style={{ padding: '80px 20px 100px' }}>
         <div style={{ maxWidth: 1050, margin: '0 auto', width: '100%' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: 60, alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 60, alignItems: 'start' }}>
             
             {/* Left side: Info */}
             <div className="fade-up">
-              <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 12, letterSpacing: '0.2em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 20 }}>✦ get in touch</div>
+              <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 12, letterSpacing: '0.2em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 20 }}>✦ Get in touch</div>
               <h1 className="playfair" style={{ fontSize: "clamp(48px, 6vw, 72px)", fontStyle: 'italic', color: T.burgundyDeep, marginBottom: 32, lineHeight: 1.1 }}>We love hearing<br/>from <em style={{ color: T.burgundyMid }}>you</em></h1>
-              <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 20, color: T.textMuted, fontStyle: 'italic', marginBottom: 60, lineHeight: 1.8, maxWidth: 450 }}>
+              <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 20, color: T.textMuted, fontStyle: 'italic', marginBottom: 40, lineHeight: 1.8, maxWidth: 450 }}>
                 Have a question about your order, want to collaborate, or just want to say hi? ✦
               </p>
 
-              <div style={{ display: 'grid', gap: 40 }}>
+              <div style={{ display: 'grid', gap: 24 }}>
                 <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                   <div style={{ width: 48, height: 48, borderRadius: '50%', background: T.blushLight, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>✦</div>
                   <div>
@@ -66,13 +79,13 @@ export default function Contact() {
                   <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 18, color: T.textMuted, lineHeight: 1.6 }}>Thank you for reaching out. We will get back to you soon ✦</p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '40px', borderRadius: 24, boxShadow: '0 15px 40px rgba(107, 26, 46, 0.05)', border: `1px solid ${T.blushBorder}` }}>
+                <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '32px', borderRadius: 24, boxShadow: '0 15px 40px rgba(107, 26, 46, 0.05)', border: `1px solid ${T.blushBorder}` }}>
                   <div style={{ marginBottom: 20 }}>
-                    <label style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, display: 'block', marginBottom: 10 }}>Full Name</label>
+                    <label style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, display: 'block', marginBottom: 10 }}>Full name</label>
                     <input 
                       type="text" 
                       className="field-input" 
-                      placeholder="Your Name" 
+                      placeholder="Your name" 
                       required 
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -80,7 +93,7 @@ export default function Contact() {
                     />
                   </div>
                   <div style={{ marginBottom: 20 }}>
-                    <label style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, display: 'block', marginBottom: 10 }}>Email Address</label>
+                    <label style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, display: 'block', marginBottom: 10 }}>Email address</label>
                     <input 
                       type="email" 
                       className="field-input" 
@@ -101,13 +114,14 @@ export default function Contact() {
                       style={{ background: '#FFF7F8', border: 'none', padding: '14px 18px', borderRadius: 12, width: '100%', fontFamily: 'EB Garamond, serif', fontSize: 16, minHeight: 140, resize: 'none', color: T.burgundyDeep, outline: 'none' }}
                     />
                   </div>
-                  <button type="submit" className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: 16, borderRadius: 28 }}>✦ &nbsp; Send Message</button>
+                  <button type="submit" className="btn-primary" style={{ width: '100%', padding: '12px', fontSize: 16, borderRadius: 28 }}>✦ &nbsp; Send message</button>
                 </form>
               )}
             </div>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

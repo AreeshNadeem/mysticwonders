@@ -45,7 +45,7 @@ export default function OrderPlaced() {
         </div>
         <div className="fade-up-1" style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.22em', color: '#C47080', textTransform: 'uppercase', marginBottom: 16 }}>✦ &nbsp; order confirmed &nbsp; ✦</div>
         <h1 className="fade-up-2 playfair hero-h1" style={{ fontStyle: 'italic', color: '#F7D6DC', lineHeight: 1.15, marginBottom: 18 }}>Your wonder<br/>is on its way</h1>
-        <p className="fade-up-3" style={{ fontFamily: 'EB Garamond, serif', fontSize: 18, color: '#C47080', fontStyle: 'italic', lineHeight: 1.7 }}>we're already tying the knots<br/>just for you ✦</p>
+        <p className="fade-up-3" style={{ fontFamily: 'EB Garamond, serif', fontSize: 18, color: '#C47080', fontStyle: 'italic', lineHeight: 1.7 }}>We're already tying the knots<br/>just for you ✦</p>
       </div>
 
       {/* Order card */}

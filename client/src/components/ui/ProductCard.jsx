@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import useCartStore    from '../../store/cartStore';
 import useWishlistStore from '../../store/wishlistStore';
 import { T } from '../../lib/constants';
+import { motion } from 'framer-motion';
 
 export default function ProductCard({ product: p, animDelay = 0 }) {
   const navigate = useNavigate();
@@ -41,12 +42,14 @@ export default function ProductCard({ product: p, animDelay = 0 }) {
         )}
 
         {/* Wishlist heart */}
-        <div
+        <motion.div
           className={`wishlist-btn-card${isSaved ? ' saved' : ''}`}
           onClick={(e) => { e.stopPropagation(); toggle(p); }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
           {isSaved ? '♥' : '♡'}
-        </div>
+        </motion.div>
       </div>
 
       {/* Info */}
@@ -60,12 +63,14 @@ export default function ProductCard({ product: p, animDelay = 0 }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span className="playfair" style={{ fontSize: 15, color: T.burgundy }}>Rs {p.price}</span>
           {!p.soldOut && (
-            <button
-              style={{ background: T.burgundy, color: T.blushLight, border: 'none', borderRadius: 20, padding: '4px 12px', fontFamily: 'EB Garamond, serif', fontSize: 12, cursor: 'pointer' }}
+            <motion.button
+              style={{ background: T.burgundy, color: T.blushLight, border: 'none', borderRadius: 20, padding: '4px 10px', fontFamily: 'EB Garamond, serif', fontSize: 13, cursor: 'pointer' }}
               onClick={handleAdd}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
             >
-              + bag
-            </button>
+              +
+            </motion.button>
           )}
         </div>
       </div>

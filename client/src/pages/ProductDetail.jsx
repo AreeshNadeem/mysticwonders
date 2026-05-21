@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { T, PRODUCTS } from '../lib/constants';
 import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 import useCartStore    from '../store/cartStore';
 import useWishlistStore from '../store/wishlistStore';
 
@@ -31,7 +32,7 @@ export default function ProductDetail() {
 
       <div className="content-wrap" style={{ marginTop: 20, maxWidth: 1400 }}>
         <div style={{ padding: '0 20px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(450px, 1.2fr) 0.8fr', gap: 'clamp(40px, 5vw, 80px)', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: 'clamp(40px, 5vw, 80px)', alignItems: 'start' }}>
             
             {/* Hero image - Enlarged */}
             <div style={{ width: '100%', aspectRatio: '1', background: `linear-gradient(160deg, ${p.bg} 0%, #EDD0D6 55%, #E4C0CA 100%)`, borderRadius: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 100, position: 'relative', overflow: 'hidden', boxShadow: '0 20px 50px rgba(107, 26, 46, 0.08)' }}>
@@ -54,7 +55,7 @@ export default function ProductDetail() {
             <div style={{ padding: '0 10px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {[p.category, '✦ handmade', p.badge].filter(Boolean).map((tag) => (
+                  {[p.category, '✦ Handmade', p.badge].filter(Boolean).map((tag) => (
                     <span key={tag} style={{ background: T.blushLight, color: T.burgundy, borderRadius: 20, padding: '4px 14px', fontFamily: 'EB Garamond, serif', fontSize: 13, letterSpacing: '0.04em' }}>{tag}</span>
                   ))}
                 </div>
@@ -83,10 +84,10 @@ export default function ProductDetail() {
 
               {/* CTAs */}
               <div style={{ display: 'flex', gap: 12, marginBottom: 40 }}>
-                <button className="btn-primary" style={{ flex: 2, padding: '18px' }} onClick={() => { handleAdd(); navigate('/checkout'); }}>
+                <button className="btn-primary hover-scale" style={{ flex: 2, padding: '12px' }} onClick={() => { handleAdd(); }}>
                   ✦ &nbsp; Add to bag
                 </button>
-                <button className="btn-outline" style={{ flex: 1, padding: '18px' }} onClick={() => toggle(p)}>
+                <button className="btn-outline" style={{ flex: 1, padding: '12px' }} onClick={() => toggle(p)}>
                   {isSaved ? '♥ Saved' : '♡ Save'}
                 </button>
               </div>
@@ -137,6 +138,7 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

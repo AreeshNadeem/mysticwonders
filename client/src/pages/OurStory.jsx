@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 import { T } from '../lib/constants';
 import BrandMotif from '../components/ui/BrandMotif';
 
@@ -29,9 +30,9 @@ export default function OurStory() {
       <div style={{ background: T.dark, padding: '100px 32px', textAlign: 'center', position: 'relative', overflow: 'hidden', minHeight: '85vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <BrandMotif dark />
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 1000 }}>
-          <div className="fade-up" style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.22em', color: '#C47080', textTransform: 'uppercase', marginBottom: 24 }}>✦ &nbsp; the maker &nbsp; ✦</div>
+          <div className="fade-up" style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.22em', color: '#C47080', textTransform: 'uppercase', marginBottom: 24 }}>✦ &nbsp; The maker &nbsp; ✦</div>
           <h1 className="playfair fade-up-1 hero-h1" style={{ fontStyle: 'italic', fontSize: 'clamp(40px, 8vw, 84px)', color: '#F7D6DC', lineHeight: 1.1, marginBottom: 24 }}>Every knot<br />tells a story</h1>
-          <p className="fade-up-2" style={{ fontFamily: 'EB Garamond, serif', fontSize: 'clamp(18px, 3vw, 24px)', color: '#C47080', fontStyle: 'italic', lineHeight: 1.7 }}>a one-woman brand, built with<br />beads and a whole lot of love</p>
+          <p className="fade-up-2" style={{ fontFamily: 'EB Garamond, serif', fontSize: 'clamp(18px, 3vw, 24px)', color: '#C47080', fontStyle: 'italic', lineHeight: 1.7 }}>A one-woman brand, built with<br />beads and a whole lot of love</p>
         </div>
       </div>
 
@@ -63,11 +64,12 @@ export default function OurStory() {
             </div>
 
             <div style={{ textAlign: 'center', marginTop: 100 }}>
-              <button className="btn-primary" style={{ width: 'auto', padding: '18px 60px' }} onClick={() => navigate('/shop')}>✦ &nbsp; Shop the collection</button>
+              <button className="btn-primary" style={{ width: 'auto', padding: '12px 32px' }} onClick={() => navigate('/shop')}>✦ &nbsp; Shop the collection</button>
             </div>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

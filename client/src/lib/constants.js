@@ -92,5 +92,5 @@ export const PRODUCTS = [
   },
 ];
 
-export const CATS = ['All', 'Keychains', 'Earrings', 'Necklaces', 'Bracelets', 'New arrivals'];
+export const CATS = ['All', 'Keychains', 'Earrings', 'Necklaces', 'Bracelets', 'New in ✦'];
 

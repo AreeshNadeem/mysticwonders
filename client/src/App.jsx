@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import useAuthStore from './store/authStore';
 
 import Landing     from './pages/Landing';
 import Shop        from './pages/Shop';
@@ -10,6 +12,7 @@ import Wishlist    from './pages/Wishlist';
 import Login       from './pages/Login';
 import OurStory    from './pages/OurStory';
 import Contact     from './pages/Contact';
+import Profile     from './pages/Profile';
 
 
 const pageVariants = {
@@ -30,6 +33,7 @@ function AnimatedRoutes() {
         <Route path="/order/:id"  element={<PageWrapper><OrderPlaced /></PageWrapper>} />
         <Route path="/wishlist"   element={<PageWrapper><Wishlist /></PageWrapper>} />
         <Route path="/login"      element={<PageWrapper><Login /></PageWrapper>} />
+        <Route path="/profile"    element={<PageWrapper><Profile /></PageWrapper>} />
         <Route path="/about"      element={<PageWrapper><OurStory /></PageWrapper>} />
         <Route path="/contact"    element={<PageWrapper><Contact /></PageWrapper>} />
         {/* Catch-all → Landing */}
@@ -55,6 +59,21 @@ function PageWrapper({ children }) {
 }
 
 export default function App() {
+  const initAuth = useAuthStore((s) => s.initAuth);
+  const loading = useAuthStore((s) => s.loading);
+
+  useEffect(() => {
+    initAuth();
+  }, [initAuth]);
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FBF8F6', color: '#6B1A2E', fontFamily: 'EB Garamond, serif', fontStyle: 'italic', fontSize: 20 }}>
+        awakening wonders...
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <div className="mw-root">

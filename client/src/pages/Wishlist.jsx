@@ -35,7 +35,7 @@ export default function Wishlist() {
       <div className="content-wrap" style={{ padding: '80px 20px 100px', maxWidth: 1400 }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.2em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 12 }}>✦ &nbsp; saved pieces</div>
+          <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.2em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 12 }}>✦ &nbsp; Saved pieces</div>
           <h1 className="playfair" style={{ fontSize: 'clamp(40px, 6vw, 64px)', fontStyle: 'italic', color: T.burgundyDeep, marginBottom: 12 }}>Your wishlist</h1>
           <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 18, color: T.textMuted, fontStyle: 'italic' }}>
             {items.length} piece{items.length !== 1 ? 's' : ''} saved{items.some((p) => p.stock && p.stock <= 3) ? ' · selling fast' : ''}
@@ -88,7 +88,7 @@ export default function Wishlist() {
           {items.length > 0 && (
             <div style={{ position: 'sticky', top: 120 }}>
               <div style={{ background: '#fff', borderRadius: 24, padding: 32, border: '1px solid #EDD0D6', marginBottom: 40, boxShadow: '0 15px 40px rgba(107, 26, 46, 0.05)' }}>
-                <div className="playfair" style={{ fontSize: 22, fontStyle: 'italic', color: T.burgundyDeep, marginBottom: 20 }}>Bag Summary</div>
+                <div className="playfair" style={{ fontSize: 22, fontStyle: 'italic', color: T.burgundyDeep, marginBottom: 20 }}>Bag summary</div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
                   <span style={{ fontFamily: 'EB Garamond, serif', fontSize: 16, color: T.textMuted }}>{items.length} pieces saved</span>
                 </div>

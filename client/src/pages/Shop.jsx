@@ -5,6 +5,7 @@ import { T, CATS } from '../lib/constants';
 import { useProducts } from '../hooks/useProducts';
 import ProductCard from '../components/ui/ProductCard';
 import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 import useCartStore from '../store/cartStore';
 
 export default function Shop() {
@@ -19,8 +20,9 @@ export default function Shop() {
 
       {/* Category chips */}
       <div style={{
-        display: 'flex', gap: 8, padding: '12px clamp(16px, 4vw, 48px)',
+        display: 'flex', gap: 8, padding: '16px clamp(16px, 4vw, 48px)',
         overflowX: 'auto', scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
         background: T.blushBg, borderBottom: '0.5px solid #EDD0D6',
       }}>
         {CATS.map((c) => (
@@ -29,8 +31,7 @@ export default function Shop() {
       </div>
 
       {/* Header row */}
-      <div style={{ padding: '40px clamp(16px, 4vw, 48px) 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1400, margin: '0 auto', width: '100%' }}>
-
+      <div style={{ padding: '32px clamp(16px, 4vw, 48px) 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1400, margin: '0 auto', width: '100%' }}>
         <div className="playfair" style={{ fontSize: 'clamp(24px, 4vw, 40px)', fontStyle: 'italic', color: T.burgundyDeep }}>
           {activeCat === 'All' ? 'All pieces' : activeCat}
         </div>
@@ -43,7 +44,7 @@ export default function Shop() {
       {loading ? (
         <div style={{ textAlign: 'center', padding: '60px 0', fontFamily: 'EB Garamond, serif', color: T.textMuted, fontStyle: 'italic' }}>loading wonders…</div>
       ) : (
-        <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%', padding: '0 20px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%' }}>
           <motion.div
             className="product-grid"
             initial="hidden"
@@ -59,6 +60,7 @@ export default function Shop() {
         </div>
       )}
 
+      <Footer />
     </div>
   );
 }
