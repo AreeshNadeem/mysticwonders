@@ -34,7 +34,15 @@ export default function ProductCard({ product: p, animDelay = 0 }) {
           position: 'relative',
         }}
       >
-        {p.emoji}
+        {p.image ? (
+          <img 
+            src={p.image} 
+            alt={p.name} 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+          />
+        ) : (
+          p.emoji
+        )}
 
         {/* Badge */}
         {p.badge && (

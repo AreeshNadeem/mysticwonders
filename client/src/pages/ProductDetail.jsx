@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { T, PRODUCTS } from '../lib/constants';
+import { T } from '../lib/constants';
 import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 import useCartStore    from '../store/cartStore';
 import useWishlistStore from '../store/wishlistStore';
+import { useProducts } from '../hooks/useProducts';
 
 const ACC = {
   'Care instructions': 'Avoid water and perfume. Store in a dry place. Clean gently with a soft cloth.',
@@ -15,12 +15,17 @@ const ACC = {
 export default function ProductDetail() {
   const { id }     = useParams();
   const navigate   = useNavigate();
-  const p          = PRODUCTS.find((x) => x.id === Number(id)) || PRODUCTS[0];
+  const { products, loading } = useProducts();
+  
+  const p = products.find((x) => String(x.id) === String(id));
   const [open, setOpen] = useState(null);
 
   const addItem  = useCartStore((s) => s.addItem);
   const toggle   = useWishlistStore((s) => s.toggle);
-  const isSaved  = useWishlistStore((s) => s.isSaved(p.id));
+  const isSaved  = useWishlistStore((s) => s.isSaved(p?.id));
+
+  if (loading) return <div style={{ height: '100vh', background: T.cream, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
+  if (!p) return <div style={{ height: '100vh', background: T.cream, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => navigate('/shop')}>Product not found. Return to shop?</div>;
 
   const handleAdd = () => {
     if (!p.soldOut) addItem(p);
@@ -30,25 +35,24 @@ export default function ProductDetail() {
     <div className="scroll-area" style={{ background: T.cream }}>
       <Navbar />
 
-      <div className="content-wrap" style={{ marginTop: 20, maxWidth: 1400 }}>
+      <div className="content-wrap" style={{ marginTop: 60, marginBottom: 100, maxWidth: 1400 }}>
         <div style={{ padding: '0 20px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: 'clamp(40px, 5vw, 80px)', alignItems: 'start' }}>
             
             {/* Hero image - Enlarged */}
-            <div style={{ width: '100%', aspectRatio: '1', background: `linear-gradient(160deg, ${p.bg} 0%, #EDD0D6 55%, #E4C0CA 100%)`, borderRadius: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 100, position: 'relative', overflow: 'hidden', boxShadow: '0 20px 50px rgba(107, 26, 46, 0.08)' }}>
-              <div style={{ opacity: 0.15, fontSize: 160, color: T.burgundy }}>✦</div>
+            <div style={{ width: '100%', aspectRatio: '1', background: `linear-gradient(160deg, ${p.bg} 0%, #EDD0D6 55%, #E4C0CA 100%)`, borderRadius: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 50px rgba(107, 26, 46, 0.08)' }}>
+              {p.image ? (
+                <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <div style={{ fontSize: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ opacity: 0.15, fontSize: 160, color: T.burgundy }}>✦</div>
+                  {p.emoji}
+                </div>
+              )}
               <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} viewBox="0 0 390 360" fill="none">
-
-
                 <circle cx="360" cy="30" r="80" stroke="#D4919F" strokeWidth="0.5" opacity="0.4"/>
                 <circle cx="30" cy="320" r="60" stroke="#D4919F" strokeWidth="0.4" opacity="0.3"/>
               </svg>
-              {/* Dot indicator */}
-              <div style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8 }}>
-                {[0,1,2].map((i) => (
-                  <div key={i} style={{ width: i === 0 ? 24 : 8, height: 8, borderRadius: 4, background: i === 0 ? T.burgundy : 'rgba(107,26,46,0.25)' }}/>
-                ))}
-              </div>
             </div>
 
             {/* Product Info */}
@@ -125,9 +129,11 @@ export default function ProductDetail() {
           <div style={{ marginTop: 80, paddingTop: 40, borderTop: '0.5px solid #EDD0D6' }}>
             <div className="playfair" style={{ fontSize: 24, fontStyle: 'italic', color: T.burgundyDeep, marginBottom: 32 }}>You may also like</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 24 }}>
-              {PRODUCTS.filter((x) => x.id !== p.id).slice(0, 4).map((r) => (
+              {products.filter((x) => x.id !== p.id).slice(0, 4).map((r) => (
                 <div key={r.id} className="mini-card shadow-sm" onClick={() => navigate(`/shop/${r.id}`)}>
-                  <div style={{ width: '100%', aspectRatio: 1, background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 44 }}>{r.emoji}</div>
+                  <div style={{ width: '100%', aspectRatio: 1, background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 44, overflow: 'hidden' }}>
+                    {r.image ? <img src={r.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : r.emoji}
+                  </div>
                   <div style={{ padding: '20px' }}>
                     <div className="playfair" style={{ fontStyle: 'italic', fontSize: 18, color: T.burgundyDeep, marginBottom: 4, lineHeight: 1.2 }}>{r.name}</div>
                     <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 16, color: T.burgundy }}>Rs {r.price}</div>
@@ -138,7 +144,6 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

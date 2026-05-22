@@ -4,7 +4,9 @@ import {
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
-  signOut 
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -47,6 +49,24 @@ const useAuthStore = create((set) => ({
 
   signIn: async (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
+  },
+
+  loginWithGoogle: async () => {
+    const provider = new GoogleAuthProvider();
+    const { user } = await signInWithPopup(auth, provider);
+    
+    // Check if user document exists, if not create it
+    const docRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      await setDoc(docRef, {
+        fullName: user.displayName || 'Friend',
+        email: user.email,
+        createdAt: new Date().toISOString(),
+        savedItems: []
+      });
+    }
+    return user;
   },
 
   logout: async () => {

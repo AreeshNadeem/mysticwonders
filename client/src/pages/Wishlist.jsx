@@ -32,7 +32,7 @@ export default function Wishlist() {
     <div className="scroll-area" style={{ background: T.cream }}>
       <Navbar />
 
-      <div className="content-wrap" style={{ padding: '80px 20px 100px', maxWidth: 1400 }}>
+      <div className="content-wrap" style={{ padding: '80px 20px 160px', maxWidth: 1400 }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 60 }}>
           <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.2em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 12 }}>✦ &nbsp; Saved pieces</div>
@@ -49,13 +49,13 @@ export default function Wishlist() {
           {/* Main List */}
           <div style={{ gridColumn: items.length > 0 ? 'span 2' : 'span 1' }}>
             {items.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '100px 0', background: '#FDF0F3', borderRadius: 24, border: '1px dashed #EDD0D6' }}>
-                <div style={{ fontSize: 60, color: T.burgundy, marginBottom: 20, opacity: 0.2 }}>✦</div>
-                <div className="playfair" style={{ fontSize: 28, fontStyle: 'italic', color: T.burgundyDeep, marginBottom: 12 }}>Nothing saved yet</div>
-                <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 18, color: T.textMuted, lineHeight: 1.7, marginBottom: 32, maxWidth: 400, margin: '0 auto 32px' }}>
+              <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FDF0F3', borderRadius: 24, border: '1px dashed #EDD0D6', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ fontSize: 50, color: T.burgundy, marginBottom: 16, opacity: 0.2 }}>✦</div>
+                <div className="playfair" style={{ fontSize: 26, fontStyle: 'italic', color: T.burgundyDeep, marginBottom: 12 }}>Nothing saved yet</div>
+                <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 17, color: T.textMuted, lineHeight: 1.6, marginBottom: 28, maxWidth: 360 }}>
                   Tap the heart on any piece you love — it will wait here for you ✦
                 </p>
-                <button className="btn-primary" style={{ width: 'auto', padding: '16px 48px' }} onClick={() => navigate('/shop')}>✦ &nbsp; Browse the shop</button>
+                <button className="btn-primary" style={{ width: 'auto', padding: '14px 40px', margin: '0 auto' }} onClick={() => navigate('/shop')}>✦ &nbsp; Browse the shop</button>
               </div>
             ) : (
               <div style={{ display: 'grid', gap: 20 }}>

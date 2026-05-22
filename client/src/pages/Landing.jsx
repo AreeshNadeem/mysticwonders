@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { T, PRODUCTS } from '../lib/constants';
 import useCartStore from '../store/cartStore';
 import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 
 const stagger = {
   animate: { transition: { staggerChildren: 0.1 } },
@@ -110,7 +109,6 @@ export default function Landing() {
       </section>
 
       {/* ── Footer ── */}
-      <Footer />
 
     </div>
   );

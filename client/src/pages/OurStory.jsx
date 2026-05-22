@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 import { T } from '../lib/constants';
 import BrandMotif from '../components/ui/BrandMotif';
 
@@ -38,7 +37,7 @@ export default function OurStory() {
 
 
       {/* Story body */}
-      <div style={{ background: T.blushBg, padding: '100px 28px' }}>
+      <div style={{ background: T.blushBg, padding: '100px 28px', paddingBottom: 120 }}>
         <div className="content-wrap">
           <div className="page-container">
             <div className="divider" style={{ margin: '0 0 80px' }}><div className="divider-line" /><span className="divider-star">✦</span><div className="divider-line" /></div>
@@ -69,7 +68,6 @@ export default function OurStory() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

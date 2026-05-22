@@ -10,9 +10,11 @@ import Checkout    from './pages/Checkout';
 import OrderPlaced from './pages/OrderPlaced';
 import Wishlist    from './pages/Wishlist';
 import Login       from './pages/Login';
+import Admin       from './pages/Admin';
 import OurStory    from './pages/OurStory';
 import Contact     from './pages/Contact';
 import Profile     from './pages/Profile';
+import Footer      from './components/layout/Footer';
 
 
 const pageVariants = {
@@ -33,6 +35,7 @@ function AnimatedRoutes() {
         <Route path="/order/:id"  element={<PageWrapper><OrderPlaced /></PageWrapper>} />
         <Route path="/wishlist"   element={<PageWrapper><Wishlist /></PageWrapper>} />
         <Route path="/login"      element={<PageWrapper><Login /></PageWrapper>} />
+        <Route path="/admin"      element={<PageWrapper><Admin /></PageWrapper>} />
         <Route path="/profile"    element={<PageWrapper><Profile /></PageWrapper>} />
         <Route path="/about"      element={<PageWrapper><OurStory /></PageWrapper>} />
         <Route path="/contact"    element={<PageWrapper><Contact /></PageWrapper>} />
@@ -51,9 +54,11 @@ function PageWrapper({ children }) {
       initial="initial"
       animate="animate"
       exit="exit"
-      style={{ minHeight: '100vh' }}
+      style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
     >
-      {children}
+      <div style={{ flex: 1 }}>
+        {children}
+      </div>
     </motion.div>
   );
 }
@@ -78,6 +83,7 @@ export default function App() {
     <BrowserRouter>
       <div className="mw-root">
         <AnimatedRoutes />
+        <Footer />
       </div>
     </BrowserRouter>
   );

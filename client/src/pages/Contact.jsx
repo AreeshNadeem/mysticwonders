@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 import { T } from '../lib/constants';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -29,7 +28,7 @@ export default function Contact() {
     <div className="scroll-area" style={{ background: T.cream }}>
       <Navbar />
       
-      <div className="content-wrap" style={{ padding: '80px 20px 100px' }}>
+      <div className="content-wrap" style={{ padding: '80px 20px 180px' }}>
         <div style={{ maxWidth: 1050, margin: '0 auto', width: '100%' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 60, alignItems: 'start' }}>
             
@@ -121,7 +120,6 @@ export default function Contact() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
