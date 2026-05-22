@@ -5,6 +5,59 @@ import Navbar from '../components/layout/Navbar';
 import useCartStore    from '../store/cartStore';
 import useWishlistStore from '../store/wishlistStore';
 
+/* ── Decorative motifs (Subtle selection for Wishlist) ────────── */
+function Star({ x, y, size = 16, opacity = 0.12 }) {
+  const s = size;
+  const pts = Array.from({ length: 5 }, (_, i) => {
+    const a = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+    const r = s / 2;
+    return `${x + r * Math.cos(a)},${y + r * Math.sin(a)}`;
+  }).join(' ');
+  return <polygon points={pts} fill={T.burgundy} opacity={opacity} />;
+}
+
+function Bow({ x, y, scale = 1, opacity = 0.12 }) {
+  return (
+    <g transform={`translate(${x},${y}) scale(${scale})`} opacity={opacity} stroke={T.burgundy} strokeWidth="1" fill="none">
+      <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" />
+      <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" />
+      <path d="M0,0 C-8,6 -16,12 -20,18" />
+      <path d="M0,0 C8,6 16,12 20,18" />
+      <circle cx="0" cy="1" r="2" fill={T.burgundy} opacity="0.2" />
+    </g>
+  );
+}
+
+function Heart({ x, y, size = 14, opacity = 0.08 }) {
+  return (
+    <path
+      d={`M${x},${y + size * 0.3} 
+         C${x},${y - size * 0.1} ${x - size * 0.5},${y - size * 0.5} ${x - size * 0.5},${y + size * 0.15}
+         C${x - size * 0.5},${y + size * 0.55} ${x},${y + size * 0.85} ${x},${y + size * 0.85}
+         C${x},${y + size * 0.85} ${x + size * 0.5},${y + size * 0.55} ${x + size * 0.5},${y + size * 0.15}
+         C${x + size * 0.5},${y - size * 0.5} ${x},${y - size * 0.1} ${x},${y + size * 0.3} Z`}
+      fill={T.burgundy}
+      opacity={opacity}
+    />
+  );
+}
+
+function WishlistMotifs() {
+  return (
+    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 0 }} viewBox="0 0 1100 900" preserveAspectRatio="xMidYMid slice" fill="none">
+      <Star x={100}  y={120} size={18} />
+      <Star x={1050} y={150} size={14} />
+      <Star x={980}  y={800} size={20} />
+      <Bow  x={150}  y={300} scale={1.1} />
+      <Bow  x={920}  y={400} scale={0.8} />
+      <Heart x={50}   y={600} size={16} />
+      <Heart x={1040} y={650} size={12} />
+      <circle cx="60"  cy="200"  r="90"  stroke={T.burgundy} strokeWidth="0.4" opacity="0.08" />
+      <circle cx="1000" cy="700"  r="130" stroke={T.burgundy} strokeWidth="0.3" opacity="0.07" />
+    </svg>
+  );
+}
+
 export default function Wishlist() {
   const navigate  = useNavigate();
   const [removing, setRemoving] = useState(null);
@@ -29,8 +82,9 @@ export default function Wishlist() {
   };
 
   return (
-    <div className="scroll-area" style={{ background: T.cream }}>
+    <div className="scroll-area" style={{ background: T.cream, position: 'relative', overflow: 'hidden' }}>
       <Navbar />
+      <WishlistMotifs />
 
       <div className="content-wrap" style={{ padding: '80px 20px 160px', maxWidth: 1400 }}>
         {/* Header */}

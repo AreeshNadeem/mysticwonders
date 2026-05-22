@@ -5,6 +5,7 @@ import Navbar from '../components/layout/Navbar';
 import useCartStore    from '../store/cartStore';
 import useWishlistStore from '../store/wishlistStore';
 import { useProducts } from '../hooks/useProducts';
+import ProductReviews from '../components/ui/ProductReviews';
 
 const ACC = {
   'Care instructions': 'Avoid water and perfume. Store in a dry place. Clean gently with a soft cloth.',
@@ -142,6 +143,9 @@ export default function ProductDetail() {
               ))}
             </div>
           </div>
+
+          {/* ── Customer Reviews ── */}
+          <ProductReviews productId={p.id} productName={p.name} />
         </div>
       </div>
     </div>

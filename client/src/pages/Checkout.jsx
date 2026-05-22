@@ -20,6 +20,59 @@ const FIELDS = [
   { key: 'address', label: 'Full delivery address', placeholder: 'house no, street, area' },
 ];
 
+/* ── Decorative motifs (Subtle selection for Checkout) ────────── */
+function Star({ x, y, size = 16, opacity = 0.12 }) {
+  const s = size;
+  const pts = Array.from({ length: 5 }, (_, i) => {
+    const a = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+    const r = s / 2;
+    return `${x + r * Math.cos(a)},${y + r * Math.sin(a)}`;
+  }).join(' ');
+  return <polygon points={pts} fill={T.burgundy} opacity={opacity} />;
+}
+
+function Bow({ x, y, scale = 1, opacity = 0.12 }) {
+  return (
+    <g transform={`translate(${x},${y}) scale(${scale})`} opacity={opacity} stroke={T.burgundy} strokeWidth="1" fill="none">
+      <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" />
+      <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" />
+      <path d="M0,0 C-8,6 -16,12 -20,18" />
+      <path d="M0,0 C8,6 16,12 20,18" />
+      <circle cx="0" cy="1" r="2" fill={T.burgundy} opacity="0.2" />
+    </g>
+  );
+}
+
+function Heart({ x, y, size = 14, opacity = 0.08 }) {
+  return (
+    <path
+      d={`M${x},${y + size * 0.3} 
+         C${x},${y - size * 0.1} ${x - size * 0.5},${y - size * 0.5} ${x - size * 0.5},${y + size * 0.15}
+         C${x - size * 0.5},${y + size * 0.55} ${x},${y + size * 0.85} ${x},${y + size * 0.85}
+         C${x},${y + size * 0.85} ${x + size * 0.5},${y + size * 0.55} ${x + size * 0.5},${y + size * 0.15}
+         C${x + size * 0.5},${y - size * 0.5} ${x},${y - size * 0.1} ${x},${y + size * 0.3} Z`}
+      fill={T.burgundy}
+      opacity={opacity}
+    />
+  );
+}
+
+function CheckoutMotifs() {
+  return (
+    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 0 }} viewBox="0 0 1100 900" preserveAspectRatio="xMidYMid slice" fill="none">
+      <Star x={80}  y={150} size={20} />
+      <Star x={1020}y={200} size={16} />
+      <Star x={950} y={750} size={18} />
+      <Bow  x={120} y={450} scale={1.2} />
+      <Bow  x={980} y={500} scale={0.9} />
+      <Heart x={40}  y={800} size={20} />
+      <Heart x={1060}y={50}  size={14} />
+      <circle cx="50"  cy="50"   r="80"  stroke={T.burgundy} strokeWidth="0.4" opacity="0.08" />
+      <circle cx="1050" cy="850"  r="120" stroke={T.burgundy} strokeWidth="0.3" opacity="0.07" />
+    </svg>
+  );
+}
+
 export default function Checkout() {
   const navigate = useNavigate();
   const items = useCartStore((s) => s.items);
@@ -74,8 +127,9 @@ export default function Checkout() {
   };
 
   return (
-    <div className="scroll-area" style={{ background: T.blushBg, paddingBottom: 140 }}>
+    <div className="scroll-area" style={{ background: T.blushBg, paddingBottom: 140, position: 'relative', overflow: 'hidden' }}>
       <Navbar />
+      <CheckoutMotifs />
 
       <div className="content-wrap" style={{ marginTop: 40 }}>
         <div style={{ maxWidth: 1250, margin: '0 auto', width: '100%', padding: '0 20px' }}>

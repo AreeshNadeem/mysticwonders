@@ -57,20 +57,76 @@ export default function Login() {
     <div className="scroll-area" style={{ background: T.blushBg, minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       <Navbar />
 
-      {/* Decorative Motifs */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 390 760" fill="none">
-        <circle cx="360" cy="120" r="140" stroke={T.burgundy} strokeWidth="0.5" opacity="0.1"/>
-        <circle cx="30"  cy="560" r="100" stroke={T.burgundy} strokeWidth="0.4" opacity="0.08"/>
-        <path d="M320 90 L324 104 L338 104 L327 112 L331 126 L320 118 L309 126 L313 112 L302 104 L316 104 Z" fill={T.burgundy} opacity="0.1"/>
+      {/* Decorative Motifs — stars, bows, hearts, circles, flourishes */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1100 900" preserveAspectRatio="xMidYMid slice" fill="none">
+        {/* Stars */}
+        <polygon points="55,48 59,62 73,62 62,70 66,84 55,76 44,84 48,70 37,62 51,62" fill={T.burgundy} opacity="0.18"/>
+        <polygon points="980,55 983,65 993,65 985,71 988,81 980,75 972,81 975,71 967,65 977,65" fill={T.burgundy} opacity="0.14"/>
+        <polygon points="30,390 34,403 47,403 37,410 41,423 30,415 19,423 23,410 13,403 26,403" fill={T.burgundy} opacity="0.16"/>
+        <polygon points="1070,480 1073,490 1083,490 1075,497 1078,507 1070,501 1062,507 1065,497 1057,490 1067,490" fill={T.burgundy} opacity="0.18"/>
+        <polygon points="520,22 523,31 532,31 525,37 528,46 520,40 512,46 515,37 508,31 517,31" fill={T.burgundy} opacity="0.11"/>
+        <polygon points="140,745 143,754 152,754 145,760 148,769 140,763 132,769 135,760 128,754 137,754" fill={T.burgundy} opacity="0.13"/>
+        <polygon points="950,795 953,804 962,804 955,810 958,819 950,813 942,819 945,810 938,804 947,804" fill={T.burgundy} opacity="0.15"/>
+        {/* Bows */}
+        <g transform="translate(90,135) scale(1.3)" opacity="0.18" stroke={T.burgundy} strokeWidth="1">
+          <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
+          <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
+          <path d="M0,0 C-8,6 -16,12 -20,18" fill="none"/>
+          <path d="M0,0 C8,6 16,12 20,18" fill="none"/>
+          <circle cx="0" cy="1" r="2.5" fill={T.burgundy} opacity="0.3"/>
+        </g>
+        <g transform="translate(1020,120) scale(1.0)" opacity="0.15" stroke={T.burgundy} strokeWidth="1">
+          <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
+          <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
+          <path d="M0,0 C-8,6 -16,12 -20,18" fill="none"/>
+          <path d="M0,0 C8,6 16,12 20,18" fill="none"/>
+          <circle cx="0" cy="1" r="2.5" fill={T.burgundy} opacity="0.3"/>
+        </g>
+        <g transform="translate(40,695) scale(0.85)" opacity="0.15" stroke={T.burgundy} strokeWidth="1">
+          <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
+          <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
+          <path d="M0,0 C-8,6 -16,12 -20,18" fill="none"/>
+          <path d="M0,0 C8,6 16,12 20,18" fill="none"/>
+          <circle cx="0" cy="1" r="2.5" fill={T.burgundy} opacity="0.3"/>
+        </g>
+        <g transform="translate(1060,670) scale(1.1)" opacity="0.17" stroke={T.burgundy} strokeWidth="1">
+          <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
+          <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
+          <path d="M0,0 C-8,6 -16,12 -20,18" fill="none"/>
+          <path d="M0,0 C8,6 16,12 20,18" fill="none"/>
+          <circle cx="0" cy="1" r="2.5" fill={T.burgundy} opacity="0.3"/>
+        </g>
+        {/* Hearts */}
+        <path d="M160,192 C160,183 150,176 150,188 C150,200 160,210 160,210 C160,210 170,200 170,188 C170,176 160,183 160,192 Z" fill={T.burgundy} opacity="0.10"/>
+        <path d="M940,295 C940,288 932,282 932,292 C932,302 940,310 940,310 C940,310 948,302 948,292 C948,282 940,288 940,295 Z" fill={T.burgundy} opacity="0.09"/>
+        <path d="M70,510 C70,497 56,488 56,504 C56,520 70,532 70,532 C70,532 84,520 84,504 C84,488 70,497 70,510 Z" fill={T.burgundy} opacity="0.08"/>
+        <path d="M365,815 C365,807 356,800 356,811 C356,822 365,830 365,830 C365,830 374,822 374,811 C374,800 365,807 365,815 Z" fill={T.burgundy} opacity="0.09"/>
+        <path d="M750,805 C750,799 743,794 743,803 C743,812 750,818 750,818 C750,818 757,812 757,803 C757,794 750,799 750,805 Z" fill={T.burgundy} opacity="0.08"/>
+        {/* Circle halos */}
+        <circle cx="100" cy="100" r="90" stroke={T.burgundy} strokeWidth="0.5" opacity="0.10"/>
+        <circle cx="1000" cy="800" r="130" stroke={T.burgundy} strokeWidth="0.4" opacity="0.09"/>
+        <circle cx="550" cy="450" r="320" stroke={T.burgundy} strokeWidth="0.3" opacity="0.06"/>
+        <circle cx="200" cy="600" r="70" stroke={T.burgundy} strokeWidth="0.5" opacity="0.08"/>
+        <circle cx="900" cy="150" r="100" stroke={T.burgundy} strokeWidth="0.4" opacity="0.08"/>
+        {/* Curved flourishes */}
+        <path d="M0,200 Q150,120 280,240 Q420,360 320,480" stroke={T.burgundy} strokeWidth="0.6" opacity="0.07"/>
+        <path d="M1100,300 Q950,400 1020,550 Q1080,680 950,750" stroke={T.burgundy} strokeWidth="0.6" opacity="0.07"/>
+        <path d="M200,880 Q350,800 480,860 Q600,920 720,840" stroke={T.burgundy} strokeWidth="0.5" opacity="0.06"/>
       </svg>
       
       <div className="content-wrap" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(20px, 5vw, 60px) 20px', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(32px, 5vw, 80px)', alignItems: 'center', width: '100%', maxWidth: 1100 }}>
           
           {/* Brand/Hero Section */}
-          <div className="fade-up" style={{ textAlign: 'left' }}>
-            <h1 className="playfair" style={{ fontSize: 'clamp(48px, 6vw, 72px)', fontStyle: 'italic', color: T.burgundyDeep, lineHeight: 1.1, marginBottom: 24 }}>Welcome<br />back</h1>
-            <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 20, color: T.textAccent, fontStyle: 'italic', lineHeight: 1.6 }}>sign in to your little corner ✦</p>
+          <div className="fade-up" style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.25em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 18 }}>✦ &nbsp; mystic wonders &nbsp; ✦</div>
+            <h1 className="playfair" style={{ fontSize: 'clamp(44px, 6vw, 68px)', fontStyle: 'italic', color: T.burgundyDeep, lineHeight: 1.1, marginBottom: 20 }}>Welcome<br />back</h1>
+            <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 20, color: T.textAccent, fontStyle: 'italic', lineHeight: 1.6, marginBottom: 28 }}>sign in to your little corner ✦</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, maxWidth: 240, margin: '0 auto', opacity: 0.35 }}>
+              <div style={{ flex: 1, height: 0.5, background: T.burgundy }} />
+              <span style={{ fontSize: 13, color: T.burgundy }}>✦</span>
+              <div style={{ flex: 1, height: 0.5, background: T.burgundy }} />
+            </div>
           </div>
 
           {/* Form Card */}

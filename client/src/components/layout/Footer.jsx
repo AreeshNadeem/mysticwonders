@@ -4,6 +4,43 @@ import { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
 import { collection, addDoc, getDocs, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
+/* ── Decorative motifs (Subtle selection for Dark Footer) ────────── */
+function Star({ x, y, size = 16, opacity = 0.05 }) {
+  const s = size;
+  const pts = Array.from({ length: 5 }, (_, i) => {
+    const a = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+    const r = s / 2;
+    return `${x + r * Math.cos(a)},${y + r * Math.sin(a)}`;
+  }).join(' ');
+  return <polygon points={pts} fill="#F7D6DC" opacity={opacity} />;
+}
+
+function Bow({ x, y, scale = 1, opacity = 0.05 }) {
+  return (
+    <g transform={`translate(${x},${y}) scale(${scale})`} opacity={opacity} stroke="#F7D6DC" strokeWidth="1.2" fill="none">
+      <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" />
+      <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" />
+      <path d="M0,0 C-8,6 -16,12 -20,18" />
+      <path d="M0,0 C8,6 16,12 20,18" />
+      <circle cx="0" cy="1" r="2" fill="#F7D6DC" opacity="0.1" />
+    </g>
+  );
+}
+
+function FooterMotifs() {
+  return (
+    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 0 }} viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" fill="none">
+      <Star x={100}  y={100} size={24} />
+      <Star x={1300} y={80}  size={18} />
+      <Star x={700}  y={320} size={14} />
+      <Bow  x={1250} y={300} scale={1.4} />
+      <Bow  x={80}   y={320} scale={1.1} />
+      <circle cx="1400" cy="50"  r="200" stroke="#6B1A2E" strokeWidth="0.5" opacity="0.08" />
+      <circle cx="0"    cy="400" r="150" stroke="#6B1A2E" strokeWidth="0.4" opacity="0.06" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -31,8 +68,7 @@ export default function Footer() {
 
   return (
     <footer style={{ background: T.darkDeep, padding: '80px 24px', position: 'relative', overflow: 'hidden' }}>
-      {/* Subtle Background Motif */}
-      <div style={{ position: 'absolute', top: '-10%', right: '-5%', fontSize: '300px', color: '#6B1A2E', opacity: 0.05, transform: 'rotate(-15deg)', pointerEvents: 'none' }}>✦</div>
+      <FooterMotifs />
 
       <div className="content-wrap">
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '60px 40px' }}>

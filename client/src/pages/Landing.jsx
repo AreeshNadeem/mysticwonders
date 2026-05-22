@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { T, PRODUCTS } from '../lib/constants';
-import useCartStore from '../store/cartStore';
 import Navbar from '../components/layout/Navbar';
+import ReviewsSection from '../components/ui/ReviewsSection';
 
 const stagger = {
   animate: { transition: { staggerChildren: 0.1 } },
@@ -107,6 +107,9 @@ export default function Landing() {
           </button>
         </motion.div>
       </section>
+
+      {/* ── Reviews ── */}
+      <ReviewsSection />
 
       {/* ── Footer ── */}
 
