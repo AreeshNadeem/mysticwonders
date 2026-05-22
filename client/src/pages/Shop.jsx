@@ -112,7 +112,18 @@ export default function Shop() {
 
       {/* Product grid */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '120px 0', fontFamily: 'EB Garamond, serif', color: T.textMuted, fontStyle: 'italic', fontSize: 18 }}>loading wonders…</div>
+        <div className="product-grid" style={{ maxWidth: 1400, margin: '0 auto', width: '100%', padding: '32px clamp(16px, 4vw, 48px)' }}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} style={{ borderRadius: 24, overflow: 'hidden', background: '#fff', border: '0.5px solid #EDD0D6' }}>
+              <div style={{ aspectRatio: '1', background: 'linear-gradient(90deg, #FDF0F3 25%, #EDD0D6 50%, #FDF0F3 75%)', backgroundSize: '200% 100%', animation: 'skeleton-shimmer 1.4s infinite' }} />
+              <div style={{ padding: '16px 20px', display: 'grid', gap: 10 }}>
+                <div style={{ height: 18, borderRadius: 8, background: 'linear-gradient(90deg, #FDF0F3 25%, #EDD0D6 50%, #FDF0F3 75%)', backgroundSize: '200% 100%', animation: 'skeleton-shimmer 1.4s infinite', width: '70%' }} />
+                <div style={{ height: 14, borderRadius: 8, background: 'linear-gradient(90deg, #FDF0F3 25%, #EDD0D6 50%, #FDF0F3 75%)', backgroundSize: '200% 100%', animation: 'skeleton-shimmer 1.4s infinite', width: '40%' }} />
+                <div style={{ height: 36, borderRadius: 20, marginTop: 8, background: 'linear-gradient(90deg, #FDF0F3 25%, #EDD0D6 50%, #FDF0F3 75%)', backgroundSize: '200% 100%', animation: 'skeleton-shimmer 1.4s infinite' }} />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%', minHeight: '40vh' }}>
           {sortedProducts.length > 0 ? (
