@@ -16,7 +16,7 @@ export default function Navbar() {
   const [searchResults, setSearchResults] = useState([]);
   const searchInputRef = useRef(null);
 
-  const isHome = location.pathname === '/' || location.pathname === '/about' || location.pathname.startsWith('/order');
+  const isHome = location.pathname === '/' || location.pathname === '/about' || location.pathname === '/track' || location.pathname.startsWith('/order');
 
   useEffect(() => {
     if (searchQuery.trim().length > 1) {
@@ -123,6 +123,9 @@ export default function Navbar() {
         <div className="nav-icons-left">
           <button className="nav-icon" onClick={() => setIsSearchOpen(true)} title="Search">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </button>
+          <button className="nav-icon" onClick={() => navigate('/track')} title="Track Order">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </button>
         </div>
 

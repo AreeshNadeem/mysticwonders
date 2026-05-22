@@ -334,12 +334,21 @@ export default function Admin() {
               {loading ? <p>Loading...</p> : (
                 <div style={{ display: 'grid', gap: 16 }}>
                   {products.map(p => (
-                    <div key={p.id} style={{ background: '#fff', padding: 20, borderRadius: 20, border: '0.5px solid #EDD0D6', display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div key={p.id} style={{ 
+                      background: p.stock && p.stock < 3 ? '#FFF9F9' : '#fff', 
+                      padding: 20, borderRadius: 20, 
+                      border: p.stock && p.stock < 3 ? '1px solid #FFD6D6' : '0.5px solid #EDD0D6', 
+                      display: 'flex', alignItems: 'center', gap: 16,
+                      position: 'relative'
+                    }}>
+                      {p.stock && p.stock < 3 && (
+                        <div style={{ position: 'absolute', top: -10, right: 20, background: '#D32F2F', color: '#fff', padding: '4px 12px', borderRadius: 12, fontSize: 10, fontFamily: 'EB Garamond', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Low stock: {p.stock}</div>
+                      )}
                       <div style={{ width: 60, height: 60, borderRadius: 12, background: p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
                         {p.image ? (
                           <img src={p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
-                          <span style={{ fontSize: 24 }}>✦</span>
+                          <span style={{ fontSize: 24, color: '#6B1A2E' }}>✦</span>
                         )}
                       </div>
                       <div style={{ flex: 1 }}>

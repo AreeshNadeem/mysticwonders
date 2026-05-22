@@ -4,7 +4,7 @@ import { T } from '../lib/constants';
 import Navbar from '../components/layout/Navbar';
 import useCartStore from '../store/cartStore';
 import useAuthStore from '../store/authStore';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 const PAYMENT_OPTIONS = [
@@ -116,6 +116,19 @@ export default function Checkout() {
     
     try {
       const docRef = await addDoc(collection(db, 'orders'), orderData);
+      
+      // Update stock for each item
+      for (const item of items) {
+        try {
+          const productRef = doc(db, 'products', String(item.id));
+          await updateDoc(productRef, {
+            stock: increment(-item.qty)
+          });
+        } catch (stockErr) {
+          console.error(`Failed to update stock for item ${item.id}`, stockErr);
+        }
+      }
+
       clearCart();
       navigate(`/order/${docRef.id}`);
     } catch (e) {
@@ -135,7 +148,7 @@ export default function Checkout() {
         <div style={{ maxWidth: 1250, margin: '0 auto', width: '100%', padding: '0 20px' }}>
           {/* Progress steps */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '14px 0 40px' }}>
-            {[{ n: '✓', label: 'Bag', done: true }, { n: '2', label: 'Delivery', active: true }, { n: '3', label: 'Confirm', inactive: true }].map((s, i) => (
+            {[{ n: '1', label: 'Bag', done: true }, { n: '2', label: 'Delivery', active: true }, { n: '3', label: 'Confirm', inactive: true }].map((s, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                   <div style={{ width: 24, height: 24, borderRadius: '50%', background: s.inactive ? '#EDD0D6' : T.burgundy, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'EB Garamond, serif', fontSize: 12, color: s.inactive ? T.textMuted : T.blushLight }}>{s.n}</div>

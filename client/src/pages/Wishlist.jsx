@@ -114,23 +114,23 @@ export default function Wishlist() {
             ) : (
               <div style={{ display: 'grid', gap: 20 }}>
                 {items.map((p) => (
-                  <div key={p.id} className={`wish-item${removing === p.id ? ' removing' : ''}`} style={{ padding: '24px', background: '#fff', borderRadius: 24, border: '1px solid #EDD0D6', boxShadow: '0 10px 30px rgba(107, 26, 46, 0.03)' }}>
-                    <div style={{ width: 120, height: 120, borderRadius: 20, background: p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
-                      <div style={{ opacity: 0.15, fontSize: 60, color: T.burgundy }}>✦</div>
+                  <div key={p.id} className={`wish-item${removing === p.id ? ' removing' : ''}`} style={{ padding: '18px', background: '#fff', borderRadius: 20, border: '1px solid #EDD0D6', boxShadow: '0 8px 24px rgba(107, 26, 46, 0.03)', display: 'flex', alignItems: 'center' }}>
+                    <div style={{ width: 100, height: 100, borderRadius: 16, background: p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                      <div style={{ opacity: 0.12, fontSize: 48, color: T.burgundy }}>✦</div>
                       {p.stock && p.stock <= 3 && (
-                        <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', background: T.burgundy, color: '#fff', borderRadius: 10, padding: '4px 12px', fontFamily: 'EB Garamond, serif', fontSize: 10, whiteSpace: 'nowrap' }}>low stock</div>
+                        <div style={{ position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)', background: T.burgundy, color: '#fff', borderRadius: 8, padding: '3px 10px', fontFamily: 'EB Garamond, serif', fontSize: 9, whiteSpace: 'nowrap' }}>low stock</div>
                       )}
                     </div>
-
-                    <div style={{ flex: 1, marginLeft: 24 }}>
-                      <div className="playfair" style={{ fontStyle: 'italic', fontSize: 24, color: T.burgundyDeep, marginBottom: 6 }}>{p.name}</div>
-                      <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 15, color: T.textMuted, marginBottom: 14 }}>{p.sub}</div>
-                      <div className="playfair" style={{ fontSize: 22, color: T.burgundy }}>Rs {p.price}</div>
+ 
+                    <div style={{ flex: 1, marginLeft: 20 }}>
+                      <div className="playfair" style={{ fontStyle: 'italic', fontSize: 20, color: T.burgundyDeep, marginBottom: 4 }}>{p.name}</div>
+                      <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, color: T.textMuted, marginBottom: 10 }}>{p.sub}</div>
+                      <div className="playfair" style={{ fontSize: 19, color: T.burgundy }}>Rs {p.price}</div>
                     </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>
-                      <button style={{ background: 'transparent', border: 'none', color: T.borderMuted, fontSize: 32, cursor: 'pointer', lineHeight: 1 }} onClick={() => handleRemove(p.id)}>×</button>
-                      <button className="btn-primary" style={{ width: 'auto', padding: '10px 24px', fontSize: 14 }} onClick={() => addItem(p)}>+ Add to bag</button>
+ 
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
+                      <button style={{ background: 'transparent', border: 'none', color: T.borderMuted, fontSize: 28, cursor: 'pointer', lineHeight: 1 }} onClick={() => handleRemove(p.id)}>×</button>
+                      <button className="btn-primary" style={{ width: 'auto', padding: '8px 18px', fontSize: 12 }} onClick={() => addItem(p)}>+ Add</button>
                     </div>
                   </div>
                 ))}

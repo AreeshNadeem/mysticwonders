@@ -61,8 +61,8 @@ export default function OrderPlaced() {
   }, [id]);
 
   const orderNum = id ? id.slice(-8).toUpperCase() : 'NBXEOWPO';
-  const address = order?.deliveryDetails?.address || 'Street X, City';
-  const phone = order?.deliveryDetails?.phone || '0300-0000000';
+  const address = order?.deliveryDetails?.address || 'Street 21, Islamabad';
+  const phone = order?.deliveryDetails?.phone || '0320 9276651';
   const payment = order?.paymentMethod === 'cod' ? 'Cash on delivery' : (order?.paymentMethod || 'Cash on delivery');
   const items = order?.items || [
     { name: 'Lucky Knot Keychain', tags: ['braided', 'gold charm'], qty: 1, price: 450, emoji: '🗝️' },
@@ -112,16 +112,16 @@ export default function OrderPlaced() {
         <div style={{ background: '#FDEEF2', borderRadius: '0 0 20px 20px', padding: '40px 32px 36px', animation: 'fadeUp 0.6s 0.65s ease both' }}>
 
           {/* INFO GRID */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', border: '0.5px solid #EDD0D6', borderRadius: 14, overflow: 'hidden', marginBottom: 36 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', border: '0.5px solid #EDD0D6', borderRadius: 14, overflow: 'hidden', marginBottom: 36, background: '#fff' }}>
             {[
               { label: 'DELIVERING TO', value: address, icon: <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" /> },
               { label: 'WHATSAPP', value: phone, icon: <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 011.18 2.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" /> },
               { label: 'PAYMENT', value: payment, icon: <><rect x="1" y="4" width="22" height="16" rx="2" ry="2" /><line x1="1" y1="10" x2="23" y2="10" /></> }
             ].map((cell, idx) => (
-              <div key={idx} style={{ padding: '20px 22px', borderRight: idx < 2 ? '0.5px solid #EDD0D6' : 'none', position: 'relative' }}>
-                <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9B6070', marginBottom: 6 }}>{cell.label}</div>
-                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 18, color: '#1A0509', lineHeight: 1.3 }}>{cell.value}</div>
-                <svg style={{ position: 'absolute', top: 18, right: 18, opacity: 0.2 }} width="18" height="18" fill="none" stroke="#C47080" strokeWidth="1" viewBox="0 0 24 24">{cell.icon}</svg>
+              <div key={idx} style={{ padding: '24px', borderRight: idx < 2 ? '0.5px solid #EDD0D6' : 'none', borderBottom: 'none', position: 'relative' }}>
+                <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9B6070', marginBottom: 8, opacity: 0.8 }}>{cell.label}</div>
+                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 19, color: '#1A0509', lineHeight: 1.2 }}>{cell.value}</div>
+                <svg style={{ position: 'absolute', top: 22, right: 22, opacity: 0.15 }} width="16" height="16" fill="none" stroke="#6B1A2E" strokeWidth="1.2" viewBox="0 0 24 24">{cell.icon}</svg>
               </div>
             ))}
           </div>
@@ -168,9 +168,9 @@ export default function OrderPlaced() {
                 { label: 'Order\nplaced', active: false, done: true, icon: <path d="M3 8l3.5 3.5L13 4.5" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" /> },
                 {
                   label: 'Being\nmade',
-                  active: true,
+                  active: false,
                   done: false,
-                  icon: <svg viewBox="-2 -2 20 20" width="15" height="15" fill="none"><path d="M8 0L9.8 5.6H15.8L11 9.1L12.8 14.7L8 11.2L3.2 14.7L5 9.1L0.2 5.6H6.2L8 0Z" fill="#fff" /></svg>
+                  icon: <svg viewBox="-3 -2 20 20" width="15" height="15" fill="none"><path d="M8 0L9.8 5.6H15.8L11 9.1L12.8 14.7L8 11.2L3.2 14.7L5 9.1L0.2 5.6H6.2L8 0Z" fill="#6B1A2E" /></svg>
                 },
                 {
                   label: 'Packed &\nshipped',

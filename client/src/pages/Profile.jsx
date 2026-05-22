@@ -8,6 +8,24 @@ import { collection, query, where, getDocs, doc, setDoc } from 'firebase/firesto
 import { db } from '../lib/firebase';
 import { seedDatabase } from '../lib/seedDatabase';
 
+/* ── ANIMATED BACKGROUND ────────────────────────────────────────────────── */
+const AnimatedBackground = () => (
+  <div className="bg-canvas" aria-hidden="true" style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" style={{ width: '100%', height: '100%' }}>
+      {/* ghost circles */}
+      <circle cx="1200" cy="150" r="220" fill="none" stroke="#6B1A2E" strokeWidth="0.5" opacity="0.4" />
+      <circle cx="200" cy="700" r="180" fill="none" stroke="#6B1A2E" strokeWidth="0.4" opacity="0.3" />
+      <circle cx="720" cy="450" r="320" fill="none" stroke="#6B1A2E" strokeWidth="0.4" opacity="0.25" />
+ 
+      {/* floating motifs */}
+      <path className="float-star" d="M180 200 L183 210 L193 210 L185 216 L188 226 L180 220 L172 226 L175 216 L167 210 L177 210 Z" fill="#C47080" style={{ opacity: 0.8, animation: 'floatStar 4s linear infinite', transformOrigin: 'center' }} />
+      <path className="float-star" d="M1260 320 L1262 328 L1270 328 L1264 333 L1266 341 L1260 336 L1254 341 L1256 333 L1250 328 L1258 328 Z" fill="#8B3545" style={{ opacity: 0.7, animation: 'floatStar 5.5s linear infinite 1.2s', transformOrigin: 'center' }} />
+      <path className="float-heart" d="M240 380 C240 372,230 366,230 375 C230 382,240 388,240 388 C240 388,250 382,250 375 C250 366,240 372,240 380" fill="#8B3545" style={{ opacity: 0.6, animation: 'floatHeart 5s ease-in-out infinite 0.5s' }} />
+      <path className="float-heart" d="M1100 100 C1100 92,1090 86,1090 95 C1090 102,1100 108,1100 108 C1100 108,1110 102,1110 95 C1110 86,1100 92,1100 100" fill="#C47080" style={{ opacity: 0.5, animation: 'floatHeart 6s ease-in-out infinite 3s' }} />
+    </svg>
+  </div>
+);
+ 
 export default function Profile() {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
@@ -72,8 +90,9 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="scroll-area" style={{ background: T.blushBg, minHeight: '100vh' }}>
+    <div className="scroll-area" style={{ background: T.blushBg, minHeight: '100vh', position: 'relative' }}>
       <Navbar />
+      <AnimatedBackground />
       
       <div className="content-wrap" style={{ marginTop: 60, paddingBottom: 100 }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>

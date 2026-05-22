@@ -57,62 +57,31 @@ export default function Login() {
     <div className="scroll-area" style={{ background: T.blushBg, minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       <Navbar />
 
-      {/* Decorative Motifs — stars, bows, hearts, circles, flourishes */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1100 900" preserveAspectRatio="xMidYMid slice" fill="none">
-        {/* Stars */}
-        <polygon points="55,48 59,62 73,62 62,70 66,84 55,76 44,84 48,70 37,62 51,62" fill={T.burgundy} opacity="0.18"/>
-        <polygon points="980,55 983,65 993,65 985,71 988,81 980,75 972,81 975,71 967,65 977,65" fill={T.burgundy} opacity="0.14"/>
-        <polygon points="30,390 34,403 47,403 37,410 41,423 30,415 19,423 23,410 13,403 26,403" fill={T.burgundy} opacity="0.16"/>
-        <polygon points="1070,480 1073,490 1083,490 1075,497 1078,507 1070,501 1062,507 1065,497 1057,490 1067,490" fill={T.burgundy} opacity="0.18"/>
-        <polygon points="520,22 523,31 532,31 525,37 528,46 520,40 512,46 515,37 508,31 517,31" fill={T.burgundy} opacity="0.11"/>
-        <polygon points="140,745 143,754 152,754 145,760 148,769 140,763 132,769 135,760 128,754 137,754" fill={T.burgundy} opacity="0.13"/>
-        <polygon points="950,795 953,804 962,804 955,810 958,819 950,813 942,819 945,810 938,804 947,804" fill={T.burgundy} opacity="0.15"/>
-        {/* Bows */}
-        <g transform="translate(90,135) scale(1.3)" opacity="0.18" stroke={T.burgundy} strokeWidth="1">
-          <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
-          <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
-          <path d="M0,0 C-8,6 -16,12 -20,18" fill="none"/>
-          <path d="M0,0 C8,6 16,12 20,18" fill="none"/>
-          <circle cx="0" cy="1" r="2.5" fill={T.burgundy} opacity="0.3"/>
-        </g>
-        <g transform="translate(1020,120) scale(1.0)" opacity="0.15" stroke={T.burgundy} strokeWidth="1">
-          <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
-          <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
-          <path d="M0,0 C-8,6 -16,12 -20,18" fill="none"/>
-          <path d="M0,0 C8,6 16,12 20,18" fill="none"/>
-          <circle cx="0" cy="1" r="2.5" fill={T.burgundy} opacity="0.3"/>
-        </g>
-        <g transform="translate(40,695) scale(0.85)" opacity="0.15" stroke={T.burgundy} strokeWidth="1">
-          <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
-          <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
-          <path d="M0,0 C-8,6 -16,12 -20,18" fill="none"/>
-          <path d="M0,0 C8,6 16,12 20,18" fill="none"/>
-          <circle cx="0" cy="1" r="2.5" fill={T.burgundy} opacity="0.3"/>
-        </g>
-        <g transform="translate(1060,670) scale(1.1)" opacity="0.17" stroke={T.burgundy} strokeWidth="1">
-          <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
-          <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
-          <path d="M0,0 C-8,6 -16,12 -20,18" fill="none"/>
-          <path d="M0,0 C8,6 16,12 20,18" fill="none"/>
-          <circle cx="0" cy="1" r="2.5" fill={T.burgundy} opacity="0.3"/>
-        </g>
-        {/* Hearts */}
-        <path d="M160,192 C160,183 150,176 150,188 C150,200 160,210 160,210 C160,210 170,200 170,188 C170,176 160,183 160,192 Z" fill={T.burgundy} opacity="0.10"/>
-        <path d="M940,295 C940,288 932,282 932,292 C932,302 940,310 940,310 C940,310 948,302 948,292 C948,282 940,288 940,295 Z" fill={T.burgundy} opacity="0.09"/>
-        <path d="M70,510 C70,497 56,488 56,504 C56,520 70,532 70,532 C70,532 84,520 84,504 C84,488 70,497 70,510 Z" fill={T.burgundy} opacity="0.08"/>
-        <path d="M365,815 C365,807 356,800 356,811 C356,822 365,830 365,830 C365,830 374,822 374,811 C374,800 365,807 365,815 Z" fill={T.burgundy} opacity="0.09"/>
-        <path d="M750,805 C750,799 743,794 743,803 C743,812 750,818 750,818 C750,818 757,812 757,803 C757,794 750,799 750,805 Z" fill={T.burgundy} opacity="0.08"/>
-        {/* Circle halos */}
-        <circle cx="100" cy="100" r="90" stroke={T.burgundy} strokeWidth="0.5" opacity="0.10"/>
-        <circle cx="1000" cy="800" r="130" stroke={T.burgundy} strokeWidth="0.4" opacity="0.09"/>
-        <circle cx="550" cy="450" r="320" stroke={T.burgundy} strokeWidth="0.3" opacity="0.06"/>
-        <circle cx="200" cy="600" r="70" stroke={T.burgundy} strokeWidth="0.5" opacity="0.08"/>
-        <circle cx="900" cy="150" r="100" stroke={T.burgundy} strokeWidth="0.4" opacity="0.08"/>
-        {/* Curved flourishes */}
-        <path d="M0,200 Q150,120 280,240 Q420,360 320,480" stroke={T.burgundy} strokeWidth="0.6" opacity="0.07"/>
-        <path d="M1100,300 Q950,400 1020,550 Q1080,680 950,750" stroke={T.burgundy} strokeWidth="0.6" opacity="0.07"/>
-        <path d="M200,880 Q350,800 480,860 Q600,920 720,840" stroke={T.burgundy} strokeWidth="0.5" opacity="0.06"/>
-      </svg>
+      {/* ── ANIMATED BACKGROUND MOTIFS ────────────────────────────────────────── */}
+      <div className="bg-canvas" aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" style={{ width: '100%', height: '100%' }}>
+          {/* ghost circles */}
+          <circle cx="1200" cy="150" r="220" fill="none" stroke="#6B1A2E" strokeWidth="0.5" opacity="0.4" />
+          <circle cx="200" cy="700" r="180" fill="none" stroke="#6B1A2E" strokeWidth="0.4" opacity="0.3" />
+          <circle cx="720" cy="450" r="320" fill="none" stroke="#6B1A2E" strokeWidth="0.4" opacity="0.2" />
+ 
+          {/* floating motifs */}
+          <path className="float-star" d="M180 200 L183 210 L193 210 L185 216 L188 226 L180 220 L172 226 L175 216 L167 210 L177 210 Z" fill="#C47080" style={{ opacity: 0.8, animation: 'floatStar 4s linear infinite', transformOrigin: 'center' }} />
+          <path className="float-star" d="M1260 320 L1262 328 L1270 328 L1264 333 L1266 341 L1260 336 L1254 341 L1256 333 L1250 328 L1258 328 Z" fill="#8B3545" style={{ opacity: 0.7, animation: 'floatStar 5.5s linear infinite 1.2s', transformOrigin: 'center' }} />
+          <path className="float-heart" d="M240 380 C240 372,230 366,230 375 C230 382,240 388,240 388 C240 388,250 382,250 375 C250 366,240 372,240 380" fill="#8B3545" style={{ opacity: 0.6, animation: 'floatHeart 5s ease-in-out infinite 0.5s' }} />
+          <path className="float-heart" d="M1100 100 C1100 92,1090 86,1090 95 C1090 102,1100 108,1100 108 C1100 108,1110 102,1110 95 C1110 86,1100 92,1100 100" fill="#C47080" style={{ opacity: 0.5, animation: 'floatHeart 6s ease-in-out infinite 3s' }} />
+ 
+          {/* Static Bows for variety */}
+          <g transform="translate(90,135) scale(1.3)" opacity="0.18" stroke={T.burgundy} strokeWidth="1">
+            <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
+            <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
+          </g>
+          <g transform="translate(1060,670) scale(1.1)" opacity="0.17" stroke={T.burgundy} strokeWidth="1">
+            <path d="M0,0 C-14,-10 -22,-4 -16,2 C-10,8 0,0 0,0 Z" fill="none"/>
+            <path d="M0,0 C14,-10 22,-4 16,2 C10,8 0,0 0,0 Z" fill="none"/>
+          </g>
+        </svg>
+      </div>
       
       <div className="content-wrap" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(20px, 5vw, 60px) 20px', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(32px, 5vw, 80px)', alignItems: 'center', width: '100%', maxWidth: 1100 }}>

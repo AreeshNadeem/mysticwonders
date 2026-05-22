@@ -2,6 +2,14 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import useAuthStore from './store/authStore';
+ 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
 
 import Landing     from './pages/Landing';
 import Shop        from './pages/Shop';
@@ -14,6 +22,7 @@ import Admin       from './pages/Admin';
 import OurStory    from './pages/OurStory';
 import Contact     from './pages/Contact';
 import Profile     from './pages/Profile';
+import TrackOrder  from './pages/TrackOrder';
 import Footer      from './components/layout/Footer';
 
 
@@ -39,6 +48,7 @@ function AnimatedRoutes() {
         <Route path="/profile"    element={<PageWrapper><Profile /></PageWrapper>} />
         <Route path="/about"      element={<PageWrapper><OurStory /></PageWrapper>} />
         <Route path="/contact"    element={<PageWrapper><Contact /></PageWrapper>} />
+        <Route path="/track"      element={<PageWrapper><TrackOrder /></PageWrapper>} />
         {/* Catch-all → Landing */}
 
         <Route path="*"           element={<PageWrapper><Landing /></PageWrapper>} />
@@ -82,6 +92,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="mw-root">
+        <ScrollToTop />
         <AnimatedRoutes />
         <Footer />
       </div>
