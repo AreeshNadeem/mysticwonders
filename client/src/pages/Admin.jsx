@@ -168,7 +168,7 @@ export default function Admin() {
   const totalRevenue = orders.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
 
   // Basic security check (ideally based on a role in DB)
-  const isAdmin = user?.email === 'tester@gmail.com';
+  const isAdmin = user?.email === 'hello.mysticwonders@gmail.com';
 
   if (!isAdmin) {
     return (
@@ -218,7 +218,7 @@ export default function Admin() {
           <div style={{ flex: 1 }} />
           <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent }}>Total Revenue</div>
+              <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9B6070', marginBottom: 8 }}>Total Revenue</div>
               <div className="playfair" style={{ fontSize: 20, color: T.burgundyDeep }}>Rs {totalRevenue.toLocaleString()}</div>
             </div>
           </div>
@@ -377,7 +377,7 @@ export default function Admin() {
                   <div key={order.id} style={{ background: '#fff', padding: 32, borderRadius: 28, border: '0.5px solid #EDD0D6', boxShadow: '0 10px 30px rgba(107, 26, 46, 0.03)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }}>
                     <div style={{ flex: '1 1 300px' }}>
                       <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
-                        <span style={{ background: T.blushLight, color: T.burgundy, borderRadius: 30, padding: '4px 14px', fontFamily: 'EB Garamond', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>#{order.id.slice(-6)}</span>
+                        <span style={{ background: T.blushLight, color: T.burgundy, borderRadius: 30, padding: '4px 14px', fontFamily: 'EB Garamond', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>#{order.id.substring(0, 8).toUpperCase()}</span>
                         <span style={{ fontFamily: 'EB Garamond', fontSize: 15, color: T.textMuted }}>{new Date(order.createdAt).toLocaleDateString()}</span>
                       </div>
                       <div className="playfair" style={{ fontSize: 20, color: T.burgundyDeep, marginBottom: 8 }}>{order.customerName || 'Mystic Customer'}</div>
@@ -392,28 +392,39 @@ export default function Admin() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
                         <div style={{ 
                           padding: '6px 16px', borderRadius: 20, fontSize: 12, fontFamily: 'EB Garamond', textTransform: 'uppercase', letterSpacing: '0.05em',
-                          background: order.status === 'Out for delivery' ? '#E8F5E9' : order.status === 'Completed' ? '#F3E5F5' : '#FFF7F8',
-                          color: order.status === 'Out for delivery' ? '#2E7D32' : order.status === 'Completed' ? '#7B1FA2' : T.burgundy,
-                          border: `0.5px solid ${order.status === 'Out for delivery' ? '#A5D6A7' : order.status === 'Completed' ? '#CE93D8' : '#EDD0D6'}`
+                          background: order.status === 'shipped' ? '#E8F5E9' : order.status === 'delivered' ? '#F3E5F5' : order.status === 'made' ? '#FFF9F0' : '#FFF7F8',
+                          color: order.status === 'shipped' ? '#2E7D32' : order.status === 'delivered' ? '#7B1FA2' : order.status === 'made' ? '#A0522D' : T.burgundy,
+                          border: `0.5px solid ${order.status === 'shipped' ? '#A5D6A7' : order.status === 'delivered' ? '#CE93D8' : order.status === 'made' ? '#FFDDAA' : '#EDD0D6'}`
                         }}>
-                          {order.status || 'Processing'}
+                          {order.status === 'pending' || !order.status ? 'Placed' : 
+                           order.status === 'made' ? 'Being Made' :
+                           order.status === 'shipped' ? 'Shipped' :
+                           order.status === 'delivered' ? 'Delivered' : order.status}
                         </div>
                         
                         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                          {order.status !== 'Completed' && order.status !== 'Out for delivery' && (
+                          {(order.status === 'pending' || !order.status) && (
                             <button 
-                              onClick={() => updateOrderStatus(order.id, 'Completed')}
+                              onClick={() => updateOrderStatus(order.id, 'made')}
                               style={{ padding: '6px 12px', borderRadius: 10, background: T.burgundy, color: '#fff', border: 'none', cursor: 'pointer', fontSize: 12 }}
                             >
-                              Made
+                              Mark as Made
                             </button>
                           )}
-                          {order.status === 'Completed' && (
+                          {order.status === 'made' && (
                             <button 
-                              onClick={() => updateOrderStatus(order.id, 'Out for delivery')}
+                              onClick={() => updateOrderStatus(order.id, 'shipped')}
+                              style={{ padding: '6px 12px', borderRadius: 10, background: '#D2691E', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 12 }}
+                            >
+                              Mark as Shipped
+                            </button>
+                          )}
+                          {order.status === 'shipped' && (
+                            <button 
+                              onClick={() => updateOrderStatus(order.id, 'delivered')}
                               style={{ padding: '6px 12px', borderRadius: 10, background: '#2E7D32', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 12 }}
                             >
-                              Dispatch
+                              Mark as Delivered
                             </button>
                           )}
                         </div>

@@ -15,6 +15,7 @@ import Landing     from './pages/Landing';
 import Shop        from './pages/Shop';
 import ProductDetail from './pages/ProductDetail';
 import Checkout    from './pages/Checkout';
+import Cart        from './pages/Cart';
 import OrderPlaced from './pages/OrderPlaced';
 import Wishlist    from './pages/Wishlist';
 import Login       from './pages/Login';
@@ -40,6 +41,7 @@ function AnimatedRoutes() {
         <Route path="/"           element={<PageWrapper><Landing /></PageWrapper>} />
         <Route path="/shop"       element={<PageWrapper><Shop /></PageWrapper>} />
         <Route path="/shop/:id"   element={<PageWrapper><ProductDetail /></PageWrapper>} />
+        <Route path="/cart"       element={<PageWrapper><Cart /></PageWrapper>} />
         <Route path="/checkout"   element={<PageWrapper><Checkout /></PageWrapper>} />
         <Route path="/order/:id"  element={<PageWrapper><OrderPlaced /></PageWrapper>} />
         <Route path="/wishlist"   element={<PageWrapper><Wishlist /></PageWrapper>} />

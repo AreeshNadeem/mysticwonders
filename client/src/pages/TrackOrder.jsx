@@ -53,7 +53,7 @@ export default function TrackOrder() {
       if (cleanedId.length === 8) {
         const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(100));
         const qSnap = await getDocs(q);
-        const match = qSnap.docs.find(d => d.id.slice(-8).toUpperCase() === cleanedId.toUpperCase());
+        const match = qSnap.docs.find(d => d.id.substring(0, 8).toUpperCase() === cleanedId.toUpperCase());
 
         if (match) {
           setOrder(match.data());
@@ -107,31 +107,44 @@ export default function TrackOrder() {
           <div style={{ background: '#ffffffff', border: '0.5px solid #EDD0D6', borderRadius: 24, padding: '48px 32px', boxShadow: '0 20px 50px rgba(0,0,0,0.2)' }}>
 
             <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9B6070', marginBottom: 8 }}>Order #{orderId.slice(-8).toUpperCase()}</div>
-              <div style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 24, color: T.burgundyDeep }}>Current Status: {order.status?.charAt(0).toUpperCase() + order.status?.slice(1) || 'Processing'}</div>
+              <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9B6070', marginBottom: 8 }}>Order #{order.id?.substring(0, 8).toUpperCase() || orderId.substring(0, 8).toUpperCase()}</div>
+              <div style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 24, color: T.burgundyDeep }}>
+                Current Status: {
+                  order.status === 'delivered' ? 'Delivered' :
+                  order.status === 'shipped' ? 'Packed & Shipped' :
+                  order.status === 'made' ? 'Being Made' : 
+                  'Order Placed'
+                }
+              </div>
             </div>
-
+ 
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', position: 'relative', maxWidth: 540, margin: '0 auto' }}>
               <div style={{ position: 'absolute', top: 18, left: '12.5%', right: '12.5%', height: '1px', background: '#EDD0D6', zIndex: 0 }}></div>
-              <div style={{ position: 'absolute', top: 18, left: '12.5%', width: '25%', height: '1px', background: '#6B1A2E', zIndex: 1 }}></div>
-
+              
+              {/* Progress Line */}
+              <div style={{ 
+                position: 'absolute', top: 18, left: '12.5%', 
+                width: order?.status === 'made' ? '25%' : order?.status === 'shipped' ? '50%' : order?.status === 'delivered' ? '75%' : '0%', 
+                height: '1px', background: '#6B1A2E', zIndex: 1, transition: 'width 0.4s ease' 
+              }}></div>
+ 
               {[
                 {
                   label: 'Order\nplaced',
-                  active: order?.status === 'pending',
-                  done: order?.status !== 'pending' && order?.status !== undefined,
+                  active: order?.status === 'pending' || !order?.status,
+                  done: order?.status === 'made' || order?.status === 'shipped' || order?.status === 'delivered',
                   icon: (color) => <path d="M3 8l3.5 3.5L13 4.5" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
                 },
                 {
                   label: 'Being\nmade',
                   active: order?.status === 'made',
-                  done: order?.status === 'Out for delivery' || order?.status === 'Completed',
+                  done: order?.status === 'shipped' || order?.status === 'delivered',
                   icon: (color) => <path d="M8 0L9.8 5.6H15.8L11 9.1L12.8 14.7L8 11.2L3.2 14.7L5 9.1L0.2 5.6H6.2L8 0Z" fill={color} />
                 },
                 {
                   label: 'Packed &\nshipped',
-                  active: order?.status === 'Out for delivery',
-                  done: order?.status === 'Completed',
+                  active: order?.status === 'shipped',
+                  done: order?.status === 'delivered',
                   icon: (color) => (
                     <g stroke={color} strokeWidth="1.2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="5" y="12" width="14" height="9" rx="1" />
@@ -144,7 +157,7 @@ export default function TrackOrder() {
                 },
                 {
                   label: 'With\nyou',
-                  active: order?.status === 'Completed',
+                  active: order?.status === 'delivered',
                   done: false,
                   icon: (color) => (
                     <>

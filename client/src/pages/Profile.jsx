@@ -137,7 +137,7 @@ export default function Profile() {
                 Sign out
               </button>
 
-              {user?.email === 'tester@gmail.com' && (
+              {user?.email === 'hello.mysticwonders@gmail.com' && (
                 <button 
                   onClick={() => navigate('/admin')}
                   style={{ width: '100%', marginTop: 16, padding: '14px', borderRadius: 16, background: '#6B1A2E', border: 'none', color: '#F7D6DC', fontFamily: 'EB Garamond, serif', fontSize: 16, cursor: 'pointer' }}

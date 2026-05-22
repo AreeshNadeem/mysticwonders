@@ -60,7 +60,7 @@ export default function OrderPlaced() {
     fetchOrder();
   }, [id]);
 
-  const orderNum = id ? id.slice(-8).toUpperCase() : 'NBXEOWPO';
+  const orderNum = id ? id.substring(0, 8).toUpperCase() : 'NBXEOWPO';
   const address = order?.deliveryDetails?.address || 'Street 21, Islamabad';
   const phone = order?.deliveryDetails?.phone || '0320 9276651';
   const payment = order?.paymentMethod === 'cod' ? 'Cash on delivery' : (order?.paymentMethod || 'Cash on delivery');
@@ -167,7 +167,7 @@ export default function OrderPlaced() {
               {[
                 { label: 'Order\nplaced', active: false, done: true, icon: <path d="M3 8l3.5 3.5L13 4.5" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" /> },
                 {
-                  label: 'Being\nmade',
+                  label: 'Made\nby us',
                   active: false,
                   done: false,
                   icon: <svg viewBox="-3 -2 20 20" width="15" height="15" fill="none"><path d="M8 0L9.8 5.6H15.8L11 9.1L12.8 14.7L8 11.2L3.2 14.7L5 9.1L0.2 5.6H6.2L8 0Z" fill="#6B1A2E" /></svg>

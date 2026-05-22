@@ -4,11 +4,13 @@ import useAuthStore from '../../store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { PRODUCTS, T } from '../../lib/constants';
+import CartDrawer from './CartDrawer';
 
 export default function Navbar() {
   const navigate   = useNavigate();
   const location   = useLocation();
   const totalItems = useCartStore((s) => s.totalItems());
+  const toggleCart = useCartStore((s) => s.toggleCart);
   const { user } = useAuthStore();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -50,6 +52,7 @@ export default function Navbar() {
 
   return (
     <nav className={`navbar-container ${isHome ? 'is-home' : 'is-page'}`} style={{ position: 'relative', zIndex: 1000 }}>
+      <CartDrawer />
       
       {/* Search Overlay */}
       <AnimatePresence>
@@ -141,7 +144,7 @@ export default function Navbar() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </button>
           <div className="cart-icon-container">
-            <button className="nav-icon" onClick={() => navigate('/checkout')} title="Shopping Bag">
+            <button className="nav-icon" onClick={toggleCart} title="Shopping Bag">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             </button>
             {totalItems > 0 && (

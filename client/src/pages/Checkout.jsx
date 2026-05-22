@@ -15,6 +15,7 @@ const PAYMENT_OPTIONS = [
 
 const FIELDS = [
   { key: 'name', label: 'Full name', placeholder: 'your full name' },
+  { key: 'email', label: 'Email address', placeholder: 'hello@example.com' },
   { key: 'phone', label: 'WhatsApp number', placeholder: '+92 3XX XXXXXXX' },
   { key: 'city', label: 'City', placeholder: 'your city' },
   { key: 'address', label: 'Full delivery address', placeholder: 'house no, street, area' },
@@ -94,7 +95,7 @@ export default function Checkout() {
       setFormError('Your magic bag is empty! Add an item first.');
       return;
     }
-    if (!fields.name || !fields.phone || !fields.city || !fields.address) {
+    if (!fields.name || !fields.email || !fields.phone || !fields.city || !fields.address) {
       setFormError('Please fill out all delivery details to proceed.');
       return;
     }
@@ -192,24 +193,32 @@ export default function Checkout() {
 
             {/* Right Column: Summary */}
             <div>
-              <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.18em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 16 }}>✦ Your bag</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.18em', color: T.textAccent, textTransform: 'uppercase' }}>✦ Your bag</div>
+                <button 
+                  onClick={() => navigate('/cart')}
+                  style={{ background: 'none', border: 'none', color: T.burgundy, fontFamily: 'EB Garamond, serif', fontSize: 13, cursor: 'pointer', fontStyle: 'italic', textDecoration: 'underline' }}
+                >
+                  Edit Bag
+                </button>
+              </div>
+              
               <div style={{ background: '#fff', borderRadius: 20, border: '0.5px solid #EDD0D6', padding: 24, boxShadow: '0 10px 30px rgba(107, 26, 46, 0.03)' }}>
                 {items.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '30px 0', fontFamily: 'EB Garamond, serif', color: T.textMuted, fontStyle: 'italic' }}>Your bag is empty</div>
                 ) : items.map((item) => (
                   <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <div style={{ width: 60, height: 60, borderRadius: 14, background: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>
-                        <span style={{ opacity: 0.2, color: T.burgundy }}>✦</span>
+                      <div style={{ width: 60, height: 60, borderRadius: 14, background: item.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>
+                        ✦
                       </div>
                       <div>
-                        <div className="playfair" style={{ fontStyle: 'italic', fontSize: 18, color: T.burgundyDeep, marginBottom: 2 }}>{item.name}</div>
+                        <div className="playfair" style={{ fontStyle: 'italic', fontSize: 17, color: T.burgundyDeep, marginBottom: 2 }}>{item.name}</div>
                         <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, color: T.textMuted }}>qty: {item.qty}</div>
                       </div>
                     </div>
-                    <div className="playfair" style={{ fontSize: 18, color: T.burgundy }}>Rs {item.price * item.qty}</div>
+                    <div className="playfair" style={{ fontSize: 17, color: T.burgundy }}>Rs {item.price * item.qty}</div>
                   </div>
-
                 ))}
 
                 <div style={{ height: '0.5px', background: '#EDD0D6', margin: '20px 0' }} />

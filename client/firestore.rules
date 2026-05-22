@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper: Check if the user is the store administrator
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'hello.mysticwonders@gmail.com';
+    }
+
+    // PRODUCTS: Everyone can browse, only Admin can manage catalog
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // REVIEWS: Everyone can read, anyone with an account can post
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if isAdmin();
+    }
+
+    // NEWSLETTER: Anyone can subscribe, only Admin can view the list
+    match /newsletter/{entryId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ORDERS: 
+    // - Everyone can read (required for public tracking)
+    // - Anyone can create (checkout)
+    // - Only Admin can update/delete
+    match /orders/{orderId} {
+      allow read, create: if true;
+      allow update, delete: if isAdmin();
+    }
+    
+    // USERS: Users manage their own profiles, Admin can see all
+    match /users/{userId} {
+      allow read, write: if isAdmin() || (request.auth != null && request.auth.uid == userId);
+    }
+  }
+}
