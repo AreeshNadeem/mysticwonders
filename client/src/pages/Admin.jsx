@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import Cropper from 'react-easy-crop';
 import { db, storage } from '../lib/firebase';
 import { T } from '../lib/constants';
 import Navbar from '../components/layout/Navbar';
@@ -17,12 +18,21 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: '', price: '', category: 'necklaces', sub: '', 
-    bg: '#FDF0F3', badge: '', stock: '', inspiration: ''
+    bg: '#FDF0F3', badge: '', stock: '', inspiration: '',
+    options: [], images: []
   });
   const [actionLoading, setActionLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [file, setFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [files, setFiles] = useState([]); // Multiple files
+  const [previewUrls, setPreviewUrls] = useState([]); // Multiple previews
+
+  // Cropping states
+  const [cropFile, setCropFile] = useState(null);
+  const [cropImage, setCropImage] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [showCropper, setShowCropper] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -52,65 +62,90 @@ export default function Admin() {
     }
   };
 
+  const onCropComplete = (croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  const createCroppedImage = async (imageSrc, pixelCrop) => {
+    const image = new Image();
+    image.src = imageSrc;
+    await new Promise(resolve => { image.onload = resolve; });
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+    ctx.drawImage(
+      image,
+      pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height,
+      0, 0, pixelCrop.width, pixelCrop.height
+    );
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, 'image/jpeg');
+    });
+  };
+
+  const handleApplyCrop = async () => {
+    try {
+      const croppedBlob = await createCroppedImage(cropImage, croppedAreaPixels);
+      const croppedFile = new File([croppedBlob], cropFile.name, { type: 'image/jpeg' });
+      setFiles([...files, croppedFile]);
+      setPreviewUrls([...previewUrls, URL.createObjectURL(croppedBlob)]);
+      setShowCropper(false);
+      setCropFile(null);
+      setCropImage(null);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const handleAdd = async (e) => {
     e.preventDefault();
     setActionLoading(true);
-    console.log("Admin: Starting save process...");
     
     try {
       let finalId = editingId;
       let isNew = !editingId;
       
-      // 1. Determine the ID first
       if (isNew) {
         const numericIds = products.map(p => Number(p.id)).filter(id => !isNaN(id));
         finalId = String(numericIds.length > 0 ? Math.max(...numericIds) + 1 : 1);
-        console.log("Admin: New product ID will be:", finalId);
       } else {
         finalId = String(editingId);
-        console.log("Admin: Updating product ID:", finalId);
       }
 
-      let imageUrl = formData.image || '';
+      let imageUrls = [...(formData.images || [])];
 
-      // 2. Upload image if a NEW file was selected
-      if (file) {
-        console.log("Admin: Uploading file to Storage...", file.name);
-        try {
-          const fileRef = ref(storage, `products/${finalId}`);
-          const uploadResult = await uploadBytes(fileRef, file);
-          imageUrl = await getDownloadURL(uploadResult.ref);
-          console.log("Admin: Upload complete. URL:", imageUrl);
-        } catch (uploadErr) {
-          console.warn("Admin: Direct upload failed (likely CORS). Falling back to URL if provided.", uploadErr);
-          if (!imageUrl) {
-            throw new Error("Direct upload failed. Please try pasting a direct image link in the 'Image URL' field instead! ✦");
-          }
-        }
+      // Upload files to Storage
+      for (const f of files) {
+        const fileRef = ref(storage, `products/${finalId}/${Date.now()}_${f.name}`);
+        const uploadResult = await uploadBytes(fileRef, f);
+        const url = await getDownloadURL(uploadResult.ref);
+        imageUrls.push(url);
       }
 
-      // 3. Save to Firestore
+      // Save to Firestore
       const docData = {
         ...formData,
-        image: imageUrl,
+        image: imageUrls[0] || '', // Primary image
+        images: imageUrls,
         price: Number(formData.price),
         stock: Number(formData.stock) || null,
+        options: formData.options || [],
         updatedAt: new Date().toISOString()
       };
 
       if (isNew) {
         docData.createdAt = new Date().toISOString();
-        console.log("Admin: Creating document in Firestore...");
         await setDoc(doc(db, 'products', finalId), docData);
       } else {
-        console.log("Admin: Updating document in Firestore...");
         await updateDoc(doc(db, 'products', finalId), docData);
       }
 
-      console.log("Admin: Product saved successfully!");
-      setFormData({ name: '', price: '', category: 'necklaces', sub: '', bg: '#FDF0F3', badge: '', stock: '', inspiration: '' });
-      setFile(null);
-      setPreviewUrl(null);
+      setFormData({ name: '', price: '', category: 'necklaces', sub: '', bg: '#FDF0F3', badge: '', stock: '', inspiration: '', options: [], images: [] });
+      setFiles([]);
+      setPreviewUrls([]);
       setEditingId(null);
       fetchProducts();
     } catch (err) {
@@ -121,27 +156,50 @@ export default function Admin() {
     }
   };
 
-  const handleFileChange = (e) => {
-    const selected = e.target.files[0];
-    if (selected) {
-      setFile(selected);
-      setPreviewUrl(URL.createObjectURL(selected));
+  const handleFileChange = async (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length === 0) return;
+
+    if (selectedFiles.length === 1) {
+      // Single file - show cropper for precision
+      const reader = new FileReader();
+      reader.onload = () => {
+        setCropImage(reader.result);
+        setCropFile(selectedFiles[0]);
+        setShowCropper(true);
+      };
+      reader.readAsDataURL(selectedFiles[0]);
+    } else {
+      // Multiple files - add them directly for speed
+      setActionLoading(true);
+      try {
+        const newFiles = [...files, ...selectedFiles];
+        const newPreviews = [...previewUrls, ...selectedFiles.map(f => URL.createObjectURL(f))];
+        setFiles(newFiles);
+        setPreviewUrls(newPreviews);
+      } finally {
+        setActionLoading(false);
+      }
     }
+    // Reset input so same file can be picked again
+    e.target.value = '';
   };
 
   const handleEdit = (p) => {
     setEditingId(p.id);
-    setPreviewUrl(p.image || null);
+    setPreviewUrls(p.images || (p.image ? [p.image] : []));
     setFormData({
       name: p.name,
       price: p.price,
       category: p.category,
       image: p.image || '',
+      images: p.images || (p.image ? [p.image] : []),
       sub: p.sub || '',
       bg: p.bg || '#FDF0F3',
       badge: p.badge || '',
       stock: p.stock || '',
-      inspiration: p.inspiration || ''
+      inspiration: p.inspiration || '',
+      options: p.options || []
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -234,23 +292,34 @@ export default function Admin() {
               </h1>
               
               <form onSubmit={handleAdd} style={{ background: '#fff', padding: 32, borderRadius: 28, border: '0.5px solid #EDD0D6', boxShadow: '0 15px 40px rgba(107, 26, 46, 0.05)', display: 'grid', gap: 20 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: 20, alignItems: 'end' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, marginBottom: 8 }}>Product Photo (Direct Upload)</label>
-                    <input type="file" accept="image/*" onChange={handleFileChange} style={{ width: '100%', fontFamily: 'EB Garamond', fontSize: 14 }} />
-                    <div style={{ marginTop: 12 }}>
-                      <label style={{ display: 'block', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, marginBottom: 8 }}>OR Paste Image URL</label>
-                      <input 
-                        value={formData.image} 
-                        onChange={e => setFormData({...formData, image: e.target.value})} 
-                        placeholder="https://example.com/photo.jpg" 
-                        style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid #EDD0D6', outline: 'none', fontSize: 14 }} 
-                      />
-                    </div>
-                  </div>
-                  {previewUrl && (
-                    <div style={{ width: 120, height: 120, borderRadius: 12, overflow: 'hidden', border: '1px solid #EDD0D6' }}>
-                      <img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {/* Photo Upload Section */}
+                <div>
+                  <input type="file" multiple accept="image/*" onChange={handleFileChange} style={{ width: '100%', fontFamily: 'EB Garamond', fontSize: 14 }} />
+                  <p style={{ fontSize: 10, color: T.textMuted, marginTop: 4 }}>✦ Tip: Select multiple files at once to skip cropping for speed.</p>
+                  
+                  {previewUrls.length > 0 && (
+                    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 16 }}>
+                      {previewUrls.map((url, i) => (
+                        <div key={i} style={{ width: 80, height: 80, borderRadius: 12, overflow: 'hidden', border: '1px solid #EDD0D6', position: 'relative' }}>
+                          <img src={url} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const newPreviews = [...previewUrls];
+                              newPreviews.splice(i, 1);
+                              setPreviewUrls(newPreviews);
+                              const newFiles = [...files];
+                              newFiles.splice(i, 1);
+                              setFiles(newFiles);
+                              // If it's an existing image, we should probably remove it from formData too
+                              if (formData.images && formData.images.includes(url)) {
+                                setFormData({ ...formData, images: formData.images.filter(img => img !== url) });
+                              }
+                            }}
+                            style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', borderRadius: '50%', width: 18, height: 18, fontSize: 10, cursor: 'pointer' }}
+                          >×</button>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -259,9 +328,54 @@ export default function Admin() {
                   <label style={{ display: 'block', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, marginBottom: 8 }}>Product Name</label>
                   <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #EDD0D6', outline: 'none' }} />
                 </div>
+
+                {/* Options Section */}
+                <div style={{ border: '1px solid #EDD0D6', borderRadius: 16, padding: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <label style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent }}>Product Options (e.g. Colors)</label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFormData({ ...formData, options: [...(formData.options || []), { name: '', price: formData.price }] })}
+                      style={{ background: 'transparent', border: 'none', color: T.burgundy, cursor: 'pointer', fontSize: 12, fontFamily: 'EB Garamond' }}
+                    >+ Add Option</button>
+                  </div>
+                  <div style={{ display: 'grid', gap: 12 }}>
+                    {formData.options?.map((opt, i) => (
+                      <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 100px 30px', gap: 10, alignItems: 'center' }}>
+                        <input 
+                          placeholder="Option Name (e.g. Red)" 
+                          value={opt.name} 
+                          onChange={(e) => {
+                            const newOpts = [...formData.options];
+                            newOpts[i].name = e.target.value;
+                            setFormData({ ...formData, options: newOpts });
+                          }}
+                          style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #EDD0D6', fontSize: 13 }}
+                        />
+                        <input 
+                          type="number" 
+                          placeholder="Price" 
+                          value={opt.price} 
+                          onChange={(e) => {
+                            const newOpts = [...formData.options];
+                            newOpts[i].price = Number(e.target.value);
+                            setFormData({ ...formData, options: newOpts });
+                          }}
+                          style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #EDD0D6', fontSize: 13 }}
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => setFormData({ ...formData, options: formData.options.filter((_, idx) => idx !== i) })}
+                          style={{ background: 'none', border: 'none', color: T.burgundy, cursor: 'pointer' }}
+                        >×</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, marginBottom: 8 }}>Price (Rs)</label>
+                    <label style={{ display: 'block', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, marginBottom: 8 }}>Base Price (Rs)</label>
                     <input type="number" required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #EDD0D6', outline: 'none' }} />
                   </div>
                   <div>
@@ -315,9 +429,9 @@ export default function Admin() {
                       type="button"
                       onClick={() => {
                         setEditingId(null);
-                        setFile(null);
-                        setPreviewUrl(null);
-                        setFormData({ name: '', price: '', category: 'necklaces', sub: '', bg: '#FDF0F3', badge: '', stock: '', inspiration: '' });
+                        setFiles([]);
+                        setPreviewUrls([]);
+                        setFormData({ name: '', price: '', category: 'necklaces', sub: '', bg: '#FDF0F3', badge: '', stock: '', inspiration: '', options: [], images: [] });
                       }}
                       style={{ padding: '0 24px', borderRadius: 28, border: '1px solid #EDD0D6', background: 'transparent', color: T.textAccent, cursor: 'pointer', fontFamily: 'EB Garamond' }}
                     >
@@ -327,6 +441,38 @@ export default function Admin() {
                 </div>
               </form>
             </div>
+
+            {/* Cropper Modal */}
+            {showCropper && (
+              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+                <div style={{ background: '#fff', borderRadius: 24, padding: 24, width: '100%', maxWidth: 500 }}>
+                  <h3 className="playfair" style={{ marginBottom: 20, fontStyle: 'italic' }}>Adjust photo</h3>
+                  <div style={{ position: 'relative', height: 300, background: '#eee', borderRadius: 12, overflow: 'hidden', marginBottom: 20 }}>
+                    <Cropper
+                      image={cropImage}
+                      crop={crop}
+                      zoom={zoom}
+                      aspect={1}
+                      onCropChange={setCrop}
+                      onCropComplete={onCropComplete}
+                      onZoomChange={setZoom}
+                    />
+                  </div>
+                  <div style={{ marginBottom: 24 }}>
+                    <label style={{ display: 'block', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textAccent, marginBottom: 8 }}>Zoom</label>
+                    <input 
+                      type="range" value={zoom} min={1} max={3} step={0.1}
+                      onChange={(e) => setZoom(e.target.value)}
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <button onClick={handleApplyCrop} className="btn-primary" style={{ flex: 1 }}>Apply Crop</button>
+                    <button onClick={() => setShowCropper(false)} className="btn-outline" style={{ flex: 1 }}>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Manage Products */}
             <div className="fade-up-1">

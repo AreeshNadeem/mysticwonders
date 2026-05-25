@@ -9,27 +9,29 @@ const useCartStore = create(
 
       addItem: (product) =>
         set((state) => {
-          const existing = state.items.find((i) => i.id === product.id);
+          const cartKey = `${product.id}-${product.selectedOption?.name || 'default'}`;
+          const existing = state.items.find((i) => i.cartKey === cartKey);
+          
           if (existing) {
             return {
               items: state.items.map((i) =>
-                i.id === product.id ? { ...i, qty: i.qty + 1 } : i
+                i.cartKey === cartKey ? { ...i, qty: i.qty + 1 } : i
               ),
               isCartOpen: true,
             };
           }
-          return { items: [...state.items, { ...product, qty: 1 }], isCartOpen: true };
+          return { items: [...state.items, { ...product, cartKey, qty: 1 }], isCartOpen: true };
         }),
 
-      removeItem: (id) =>
-        set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
+      removeItem: (cartKey) =>
+        set((state) => ({ items: state.items.filter((i) => i.cartKey !== cartKey) })),
 
-      updateQty: (id, qty) =>
+      updateQty: (cartKey, qty) =>
         set((state) => ({
           items:
             qty <= 0
-              ? state.items.filter((i) => i.id !== id)
-              : state.items.map((i) => (i.id === id ? { ...i, qty } : i)),
+              ? state.items.filter((i) => i.cartKey !== cartKey)
+              : state.items.map((i) => (i.cartKey === cartKey ? { ...i, qty } : i)),
         })),
 
       clearCart: () => set({ items: [] }),

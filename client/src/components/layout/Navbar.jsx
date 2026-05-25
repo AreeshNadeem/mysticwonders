@@ -3,6 +3,8 @@ import useCartStore from '../../store/cartStore';
 import useAuthStore from '../../store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { PRODUCTS, T } from '../../lib/constants';
 import CartDrawer from './CartDrawer';
 
@@ -21,16 +23,38 @@ export default function Navbar() {
   const isHome = location.pathname === '/' || location.pathname === '/about' || location.pathname === '/track' || location.pathname.startsWith('/order');
 
   useEffect(() => {
-    if (searchQuery.trim().length > 1) {
-      const filtered = PRODUCTS.filter(p => 
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.sub.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 5);
-      setSearchResults(filtered);
-    } else {
-      setSearchResults([]);
-    }
+    const performSearch = async () => {
+      if (searchQuery.trim().length > 1) {
+        try {
+          const q = query(
+            collection(db, 'products'),
+            orderBy('name')
+          );
+          const snap = await getDocs(q);
+          const allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          
+          const filtered = allProducts.filter(p => 
+            p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (p.category && p.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (p.sub && p.sub.toLowerCase().includes(searchQuery.toLowerCase()))
+          ).slice(0, 5);
+          
+          setSearchResults(filtered);
+        } catch (err) {
+          console.error("Search error:", err);
+          // Fallback to static products if Firestore fails or is empty
+          const filtered = PRODUCTS.filter(p => 
+            p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.sub.toLowerCase().includes(searchQuery.toLowerCase())
+          ).slice(0, 5);
+          setSearchResults(filtered);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    };
+    performSearch();
   }, [searchQuery]);
 
   useEffect(() => {
@@ -98,7 +122,13 @@ export default function Navbar() {
                           onMouseOver={(e) => { e.currentTarget.style.background = '#FFF7F8'; e.currentTarget.style.borderColor = '#EDD0D6'; }}
                           onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent'; }}
                         >
-                          <div style={{ width: 60, height: 60, borderRadius: 12, background: p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>✦</div>
+                          <div style={{ width: 60, height: 60, borderRadius: 12, background: p.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                            {p.images?.[0] || p.image ? (
+                              <img src={p.images?.[0] || p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                              <span style={{ fontSize: 24 }}>✦</span>
+                            )}
+                          </div>
                           <div style={{ flex: 1 }}>
                             <div className="playfair" style={{ fontSize: 18, fontStyle: 'italic', color: T.burgundyDeep }}>{p.name}</div>
                             <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 14, color: T.textMuted }}>{p.sub}</div>

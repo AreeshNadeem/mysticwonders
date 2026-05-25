@@ -78,35 +78,44 @@ export default function CartDrawer() {
               ) : (
                 <div style={{ display: 'grid', gap: 24 }}>
                   {items.map((item) => (
-                    <div key={item.id} style={{ display: 'flex', gap: 16 }}>
-                      {/* Item Image Placeholder */}
-                      <div style={{ width: 80, height: 80, borderRadius: 12, background: item.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, flexShrink: 0 }}>
-                        ✦
+                    <div key={item.cartKey} style={{ display: 'flex', gap: 16 }}>
+                      {/* Item Image */}
+                      <div style={{ width: 80, height: 80, borderRadius: 12, background: item.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                        {item.image ? (
+                          <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontSize: 24 }}>✦</span>
+                        )}
                       </div>
                       
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
                           <div className="playfair" style={{ fontSize: 17, fontStyle: 'italic', color: T.burgundyDeep }}>{item.name}</div>
                           <button 
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeItem(item.cartKey)}
                             style={{ background: 'none', border: 'none', color: '#C47080', cursor: 'pointer', padding: 2, fontSize: 16 }}
                           >
                             ×
                           </button>
                         </div>
-                        <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, color: T.textMuted, marginBottom: 12 }}>{item.sub}</div>
+                        <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, color: T.textMuted, marginBottom: 4 }}>{item.sub}</div>
+                        {item.selectedOption && (
+                          <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, color: T.textAccent, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+                            Option: {item.selectedOption.name}
+                          </div>
+                        )}
                         
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div style={{ display: 'flex', alignItems: 'center', border: '0.5px solid #EDD0D6', borderRadius: 20, padding: '4px 8px', gap: 12 }}>
                             <button 
-                              onClick={() => updateQty(item.id, item.qty - 1)}
+                              onClick={() => updateQty(item.cartKey, item.qty - 1)}
                               style={{ background: 'none', border: 'none', color: T.burgundy, fontSize: 18, cursor: 'pointer', padding: '0 4px' }}
                             >
                               −
                             </button>
                             <span style={{ fontFamily: 'EB Garamond, serif', fontSize: 14, color: T.burgundyDeep, minWidth: 12, textAlign: 'center' }}>{item.qty}</span>
                             <button 
-                              onClick={() => updateQty(item.id, item.qty + 1)}
+                              onClick={() => updateQty(item.cartKey, item.qty + 1)}
                               style={{ background: 'none', border: 'none', color: T.burgundy, fontSize: 18, cursor: 'pointer', padding: '0 4px' }}
                             >
                               +

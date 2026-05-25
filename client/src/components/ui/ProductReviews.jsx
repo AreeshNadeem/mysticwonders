@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, getDocs, addDoc, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, addDoc, orderBy, query, onSnapshot, where } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { T } from '../../lib/constants';
 
@@ -23,29 +23,52 @@ export default function ProductReviews({ productId, productName }) {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: '', comment: '', image: '' });
 
-  const fetchReviews = async () => {
-    try {
-      const q = query(
-        collection(db, 'products', String(productId), 'reviews'),
-        orderBy('createdAt', 'desc')
-      );
-      const snap = await getDocs(q);
-      setReviews(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    } catch (err) {
-      console.error('Error fetching reviews:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    if (!productId) return;
+    
+    console.log('Setting up reviews listener for product:', productId);
+    
+    // Query global reviews collection but filter for this product
+    const q = query(
+      collection(db, 'reviews'),
+      where('productId', '==', String(productId)),
+      orderBy('createdAt', 'desc')
+    );
 
-  useEffect(() => { fetchReviews(); }, [productId]);
+    const unsubscribe = onSnapshot(q, 
+      (snap) => {
+        const fetched = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        console.log(`Fetched ${fetched.length} reviews for ${productId} from global collection`);
+        setReviews(fetched);
+        setLoading(false);
+      },
+      (err) => {
+        console.error('Reviews listener error:', err);
+        // Fallback: try querying without orderBy if index is missing
+        const fallbackQ = query(
+          collection(db, 'reviews'),
+          where('productId', '==', String(productId))
+        );
+        onSnapshot(fallbackQ, (s) => {
+          const f = s.docs.map(d => ({ id: d.id, ...d.data() }));
+          f.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+          setReviews(f);
+          setLoading(false);
+        });
+      }
+    );
+
+    return () => unsubscribe();
+  }, [productId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.comment.trim()) return;
     setSubmitting(true);
     try {
-      await addDoc(collection(db, 'products', String(productId), 'reviews'), {
+      console.log('Submitting review for product:', productId, productName);
+      
+      const productReviewPromise = addDoc(collection(db, 'products', String(productId), 'reviews'), {
         name: form.name.trim(),
         comment: form.comment.trim(),
         image: form.image.trim() || null,
@@ -54,8 +77,7 @@ export default function ProductReviews({ productId, productName }) {
         createdAt: new Date().toISOString(),
       });
 
-      // Also add to global reviews collection for landing page
-      await addDoc(collection(db, 'reviews'), {
+      const globalReviewPromise = addDoc(collection(db, 'reviews'), {
         name: form.name.trim(),
         comment: form.comment.trim(),
         image: form.image.trim() || null,
@@ -64,13 +86,22 @@ export default function ProductReviews({ productId, productName }) {
         createdAt: new Date().toISOString(),
       });
 
+      const results = await Promise.allSettled([productReviewPromise, globalReviewPromise]);
+      
+      const errors = results.filter(r => r.status === 'rejected');
+      if (errors.length > 0) {
+        console.error('Some review writes failed:', errors);
+        if (errors.length === 2) throw new Error('Both review writes failed');
+      }
+
+      console.log('Review submitted successfully');
       setSubmitted(true);
       setForm({ name: '', comment: '', image: '' });
       setShowForm(false);
-      fetchReviews();
+      // Global listener handles update
     } catch (err) {
-      alert('Something went wrong. Please try again.');
-      console.error(err);
+      alert(`Could not share review: ${err.message || 'Unknown error'}. Please check your connection and try again.`);
+      console.error('Full review submission error:', err);
     } finally {
       setSubmitting(false);
     }

@@ -54,9 +54,13 @@ export default function Cart() {
               {/* Left: Items List */}
               <div style={{ display: 'grid', gap: 20 }}>
                 {items.map((item) => (
-                  <div key={item.id} style={{ background: '#fff', padding: 24, borderRadius: 24, border: '0.5px solid #EDD0D6', display: 'flex', gap: 24, alignItems: 'center' }}>
-                    <div style={{ width: 100, height: 100, borderRadius: 16, background: item.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, flexShrink: 0 }}>
-                      ✦
+                  <div key={item.cartKey} style={{ background: '#fff', padding: 24, borderRadius: 24, border: '0.5px solid #EDD0D6', display: 'flex', gap: 24, alignItems: 'center' }}>
+                    <div style={{ width: 100, height: 100, borderRadius: 16, background: item.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                      {item.image ? (
+                        <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <span style={{ fontSize: 32 }}>✦</span>
+                      )}
                     </div>
                     
                     <div style={{ flex: 1 }}>
@@ -64,9 +68,14 @@ export default function Cart() {
                         <div>
                           <div className="playfair" style={{ fontSize: 20, fontStyle: 'italic', color: T.burgundyDeep }}>{item.name}</div>
                           <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 14, color: T.textMuted }}>{item.sub}</div>
+                          {item.selectedOption && (
+                            <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 12, color: T.textAccent, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 4 }}>
+                              Option: {item.selectedOption.name}
+                            </div>
+                          )}
                         </div>
                         <button 
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(item.cartKey)}
                           style={{ background: 'none', border: 'none', color: '#C47080', cursor: 'pointer', fontSize: 20, padding: 4 }}
                         >
                           ×
@@ -76,14 +85,14 @@ export default function Cart() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, flexWrap: 'wrap', gap: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', border: '0.5px solid #EDD0D6', borderRadius: 24, padding: '4px 10px', gap: 12 }}>
                           <button 
-                            onClick={() => updateQty(item.id, item.qty - 1)}
+                            onClick={() => updateQty(item.cartKey, item.qty - 1)}
                             style={{ background: 'none', border: 'none', color: T.burgundy, fontSize: 18, cursor: 'pointer', padding: '0 4px' }}
                           >
                             −
                           </button>
                           <span style={{ fontFamily: 'EB Garamond, serif', fontSize: 16, color: T.burgundyDeep, minWidth: 20, textAlign: 'center' }}>{item.qty}</span>
                           <button 
-                            onClick={() => updateQty(item.id, item.qty + 1)}
+                            onClick={() => updateQty(item.cartKey, item.qty + 1)}
                             style={{ background: 'none', border: 'none', color: T.burgundy, fontSize: 20, cursor: 'pointer' }}
                           >
                             +

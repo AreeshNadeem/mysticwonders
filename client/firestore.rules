@@ -13,10 +13,17 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // REVIEWS: Everyone can read, anyone with an account can post
+    // REVIEWS: Everyone can read, anyone can post (including guests)
     match /reviews/{reviewId} {
       allow read: if true;
-      allow create: if request.auth != null;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // PRODUCT REVIEWS: Everyone can read, anyone can post (subcollection)
+    match /products/{productId}/reviews/{reviewId} {
+      allow read: if true;
+      allow create: if true;
       allow update, delete: if isAdmin();
     }
 

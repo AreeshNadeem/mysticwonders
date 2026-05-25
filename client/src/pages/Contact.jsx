@@ -57,42 +57,42 @@ function MotifsBg() {
       fill="none"
     >
       {/* ── Stars scattered ── */}
-      <Star x={60}  y={80}  size={22} opacity={0.22} />
-      <Star x={980} y={60}  size={14} opacity={0.15} />
-      <Star x={1050}y={240} size={10} opacity={0.13} />
-      <Star x={30}  y={400} size={18} opacity={0.18} />
-      <Star x={1080}y={500} size={20} opacity={0.20} />
+      <Star x={60} y={80} size={22} opacity={0.22} />
+      <Star x={980} y={60} size={14} opacity={0.15} />
+      <Star x={1050} y={240} size={10} opacity={0.13} />
+      <Star x={30} y={400} size={18} opacity={0.18} />
+      <Star x={1080} y={500} size={20} opacity={0.20} />
       <Star x={140} y={750} size={12} opacity={0.14} />
       <Star x={950} y={800} size={16} opacity={0.17} />
-      <Star x={520} y={30}  size={10} opacity={0.12} />
+      <Star x={520} y={30} size={10} opacity={0.12} />
       <Star x={400} y={870} size={14} opacity={0.15} />
-      <Star x={700} y={860} size={8}  opacity={0.10} />
-      <Star x={80}  y={600} size={8}  opacity={0.10} />
+      <Star x={700} y={860} size={8} opacity={0.10} />
+      <Star x={80} y={600} size={8} opacity={0.10} />
 
       {/* ── Ribbon bows ── */}
-      <Bow x={90}  y={140} scale={1.4} opacity={0.20} />
-      <Bow x={1020}y={130} scale={1.0} opacity={0.16} />
-      <Bow x={40}  y={700} scale={0.8} opacity={0.15} />
-      <Bow x={1060}y={680} scale={1.2} opacity={0.18} />
-      <Bow x={280} y={50}  scale={0.7} opacity={0.13} />
-      <Bow x={820} y={50}  scale={0.9} opacity={0.14} />
+      <Bow x={90} y={140} scale={1.4} opacity={0.20} />
+      <Bow x={1020} y={130} scale={1.0} opacity={0.16} />
+      <Bow x={40} y={700} scale={0.8} opacity={0.15} />
+      <Bow x={1060} y={680} scale={1.2} opacity={0.18} />
+      <Bow x={280} y={50} scale={0.7} opacity={0.13} />
+      <Bow x={820} y={50} scale={0.9} opacity={0.14} />
       <Bow x={550} y={880} scale={1.0} opacity={0.16} />
 
       {/* ── Floating hearts ── */}
       <Heart x={160} y={200} size={18} opacity={0.12} />
       <Heart x={940} y={300} size={14} opacity={0.10} />
-      <Heart x={70}  y={520} size={22} opacity={0.09} />
-      <Heart x={1040}y={420} size={10} opacity={0.11} />
+      <Heart x={70} y={520} size={22} opacity={0.09} />
+      <Heart x={1040} y={420} size={10} opacity={0.11} />
       <Heart x={360} y={820} size={16} opacity={0.10} />
       <Heart x={760} y={810} size={12} opacity={0.09} />
       <Heart x={500} y={120} size={10} opacity={0.08} />
 
       {/* ── Circle halos ── */}
-      <circle cx="100"  cy="100"  r="90"  stroke={T.burgundy} strokeWidth="0.5" opacity="0.10" />
-      <circle cx="1000" cy="800"  r="130" stroke={T.burgundy} strokeWidth="0.4" opacity="0.09" />
-      <circle cx="550"  cy="450"  r="320" stroke={T.burgundy} strokeWidth="0.3" opacity="0.06" />
-      <circle cx="200"  cy="600"  r="70"  stroke={T.burgundy} strokeWidth="0.5" opacity="0.08" />
-      <circle cx="900"  cy="150"  r="100" stroke={T.burgundy} strokeWidth="0.4" opacity="0.08" />
+      <circle cx="100" cy="100" r="90" stroke={T.burgundy} strokeWidth="0.5" opacity="0.10" />
+      <circle cx="1000" cy="800" r="130" stroke={T.burgundy} strokeWidth="0.4" opacity="0.09" />
+      <circle cx="550" cy="450" r="320" stroke={T.burgundy} strokeWidth="0.3" opacity="0.06" />
+      <circle cx="200" cy="600" r="70" stroke={T.burgundy} strokeWidth="0.5" opacity="0.08" />
+      <circle cx="900" cy="150" r="100" stroke={T.burgundy} strokeWidth="0.4" opacity="0.08" />
 
       {/* ── Curved line flourishes ── */}
       <path d="M0,200 Q150,120 280,240 Q420,360 320,480" stroke={T.burgundy} strokeWidth="0.6" opacity="0.08" />
@@ -183,7 +183,7 @@ export default function Contact() {
               <div style={{ marginTop: 44, background: '#fff', borderRadius: 20, border: `0.5px solid ${T.blushBorder}`, padding: '22px 26px', boxShadow: '0 6px 18px rgba(107,26,46,0.04)' }}>
                 <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.16em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 10 }}>✦ &nbsp; response time</div>
                 <p style={{ fontFamily: 'EB Garamond, serif', fontSize: 16, color: T.textMuted, fontStyle: 'italic', lineHeight: 1.7 }}>
-                  We typically respond within 24–48 hours. For quick questions, WhatsApp is the fastest! 🌸
+                  We typically respond within 24–48 hours. For quick questions, WhatsApp is the fastest!
                 </p>
               </div>
             </motion.div>

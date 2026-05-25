@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { T, PRODUCTS } from '../lib/constants';
+import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar';
 import ReviewsSection from '../components/ui/ReviewsSection';
 
@@ -14,12 +17,34 @@ const child = {
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [newWonders, setNewWonders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNewWonders = async () => {
+      try {
+        const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        // Filter for "New" badge or just take latest 4 if none marked as new
+        const filtered = all.filter(p => p.badge === 'New');
+        setNewWonders(filtered.length > 0 ? filtered.slice(0, 4) : all.slice(0, 4));
+      } catch (err) {
+        console.error("Error fetching landing products:", err);
+        setNewWonders(PRODUCTS.slice(0, 4));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNewWonders();
+  }, []);
 
   return (
     <div className="scroll-area" style={{ background: T.dark }}>
       <Navbar />
 
-      {/* ── Hero ── */}
+      {/* Hero section remains unchanged */}
       <section style={{ minHeight: '95vh', background: T.dark, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {/* SVG motif */}
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} viewBox="0 0 390 760" fill="none">
@@ -58,11 +83,14 @@ export default function Landing() {
         <div className="content-wrap">
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
             <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.2em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 8 }}>✦ &nbsp; new arrivals</div>
-            <h2 className="playfair section-h2" style={{ fontStyle: 'italic', color: T.burgundyDeep }}>Latest wonders</h2>
+            <h2 className="playfair section-h2" style={{ fontStyle: 'italic', color: T.burgundyDeep }}>New wonders</h2>
           </div>
           <div className="divider"><div className="divider-line"/><span className="divider-star">✦</span><div className="divider-line"/></div>
           <div className="featured-grid">
-            {PRODUCTS.slice(0, 4).map((p, index) => (
+            {loading ? (
+              [0, 1, 2, 3].map(i => <div key={i} style={{ height: 300, background: '#fff', borderRadius: 20, opacity: 0.1, animation: 'pulse 1.5s infinite' }} />)
+            ) : (
+              newWonders.map((p, index) => (
               <motion.div 
                 key={p.id} 
                 className="product-card" 
@@ -72,8 +100,12 @@ export default function Landing() {
                 viewport={{ once: true, margin: "0px 0px -50px 0px" }}
                 transition={{ duration: 0.6, delay: index * 0.1, ease: 'easeOut' }}
               >
-                <div style={{ width: '100%', aspectRatio: 1, background: p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, position: 'relative' }}>
-                  <div style={{ opacity: 0.2, fontSize: 60, color: T.burgundy }}>✦</div>
+                <div style={{ width: '100%', aspectRatio: 1, background: p.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
+                  {p.images?.[0] || p.image ? (
+                    <img src={p.images?.[0] || p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ opacity: 0.2, fontSize: 60, color: T.burgundy }}>✦</div>
+                  )}
                   {p.badge && !p.soldOut && <div className="badge">{p.badge}</div>}
                 </div>
 
@@ -83,7 +115,8 @@ export default function Landing() {
                   <div className="playfair" style={{ fontSize: 18, color: T.burgundy }}>Rs {p.price}</div>
                 </div>
               </motion.div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>

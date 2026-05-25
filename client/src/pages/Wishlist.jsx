@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { T, PRODUCTS } from '../lib/constants';
+import { T } from '../lib/constants';
 import Navbar from '../components/layout/Navbar';
-import useCartStore    from '../store/cartStore';
 import useWishlistStore from '../store/wishlistStore';
+import { useProducts } from '../hooks/useProducts';
+import useCartStore from '../store/cartStore';
 
-/* ── Decorative motifs (Subtle selection for Wishlist) ────────── */
+/* ── Decorative motifs ───────────────────────────────────── */
 function Star({ x, y, size = 16, opacity = 0.12 }) {
   const s = size;
   const pts = Array.from({ length: 5 }, (_, i) => {
@@ -57,16 +58,47 @@ function WishlistMotifs() {
     </svg>
   );
 }
-
 export default function Wishlist() {
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
   const [removing, setRemoving] = useState(null);
 
-  const items    = useWishlistStore((s) => s.items);
-  const remove   = useWishlistStore((s) => s.remove);
-  const addItem  = useCartStore((s) => s.addItem);
+  const items = useWishlistStore((s) => s.items);
+  const cartItems = useCartStore((s) => s.items);
+  const remove = useWishlistStore((s) => s.remove);
+  const addItem = useCartStore((s) => s.addItem);
+  
+  const { products: allProducts, loading: productsLoading } = useProducts();
 
-  const SUGGESTIONS = PRODUCTS.filter((p) => !items.find((w) => w.id === p.id)).slice(0, 4);
+  // Recommendation Algorithm
+  const getSuggestions = () => {
+    if (productsLoading || !allProducts.length) return [];
+    
+    // 1. IDs already in wishlist or cart
+    const ownedIds = new Set([
+      ...items.map(p => String(p.id)),
+      ...cartItems.map(p => String(p.id))
+    ]);
+
+    // 2. Categories the user is currently interested in
+    const activeCategories = new Set([
+      ...items.map(p => p.category?.toLowerCase()),
+      ...cartItems.map(p => p.category?.toLowerCase())
+    ].filter(Boolean));
+
+    // 3. Score and filter
+    return allProducts
+      .filter(p => !ownedIds.has(String(p.id)) && !p.soldOut)
+      .map(p => {
+        let score = 0;
+        if (activeCategories.has(p.category?.toLowerCase())) score += 2;
+        if (p.badge === 'New' || p.badge === 'Bestseller') score += 1;
+        return { ...p, score };
+      })
+      .sort((a, b) => b.score - a.score || Math.random() - 0.5)
+      .slice(0, 4);
+  };
+
+  const SUGGESTIONS = getSuggestions();
 
   const handleRemove = (id) => {
     setRemoving(id);
@@ -115,8 +147,12 @@ export default function Wishlist() {
               <div style={{ display: 'grid', gap: 20 }}>
                 {items.map((p) => (
                   <div key={p.id} className={`wish-item${removing === p.id ? ' removing' : ''}`} style={{ padding: '18px', background: '#fff', borderRadius: 20, border: '1px solid #EDD0D6', boxShadow: '0 8px 24px rgba(107, 26, 46, 0.03)', display: 'flex', alignItems: 'center' }}>
-                    <div style={{ width: 100, height: 100, borderRadius: 16, background: p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
-                      <div style={{ opacity: 0.12, fontSize: 48, color: T.burgundy }}>✦</div>
+                    <div style={{ width: 100, height: 100, borderRadius: 16, background: p.bg || T.blushBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                      {(p.images?.[0] || p.image) ? (
+                        <img src={p.images?.[0] || p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <div style={{ opacity: 0.12, fontSize: 48, color: T.burgundy }}>✦</div>
+                      )}
                       {p.stock && p.stock <= 3 && (
                         <div style={{ position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)', background: T.burgundy, color: '#fff', borderRadius: 8, padding: '3px 10px', fontFamily: 'EB Garamond, serif', fontSize: 9, whiteSpace: 'nowrap' }}>low stock</div>
                       )}
@@ -157,7 +193,13 @@ export default function Wishlist() {
                   <div style={{ display: 'grid', gap: 16 }}>
                     {SUGGESTIONS.map((p) => (
                       <div key={p.id} className="mini-card" onClick={() => navigate(`/shop/${p.id}`)} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '12px', background: '#fff', borderRadius: 16, border: '1px solid #EDD0D6' }}>
-                        <div style={{ width: 60, height: 60, borderRadius: 10, background: p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>✦</div>
+                        <div style={{ width: 60, height: 60, borderRadius: 10, background: p.bg || T.blushBg, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                          {(p.images?.[0] || p.image) ? (
+                            <img src={p.images?.[0] || p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            <span style={{ fontSize: 24 }}>✦</span>
+                          )}
+                        </div>
                         <div>
                           <div className="playfair" style={{ fontStyle: 'italic', fontSize: 15, color: T.burgundyDeep, lineHeight: 1.2 }}>{p.name}</div>
                           <div className="playfair" style={{ fontSize: 15, color: T.burgundy, marginTop: 2 }}>Rs {p.price}</div>

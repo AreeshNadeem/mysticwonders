@@ -207,14 +207,20 @@ export default function Checkout() {
                 {items.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '30px 0', fontFamily: 'EB Garamond, serif', color: T.textMuted, fontStyle: 'italic' }}>Your bag is empty</div>
                 ) : items.map((item) => (
-                  <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+                  <div key={item.cartKey} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <div style={{ width: 60, height: 60, borderRadius: 14, background: item.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>
-                        ✦
+                      <div style={{ width: 60, height: 60, borderRadius: 14, background: item.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                        {item.image ? (
+                          <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontSize: 24 }}>✦</span>
+                        )}
                       </div>
                       <div>
                         <div className="playfair" style={{ fontStyle: 'italic', fontSize: 17, color: T.burgundyDeep, marginBottom: 2 }}>{item.name}</div>
-                        <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, color: T.textMuted }}>qty: {item.qty}</div>
+                        <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, color: T.textMuted }}>
+                          qty: {item.qty} {item.selectedOption && `· ${item.selectedOption.name}`}
+                        </div>
                       </div>
                     </div>
                     <div className="playfair" style={{ fontSize: 17, color: T.burgundy }}>Rs {item.price * item.qty}</div>

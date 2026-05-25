@@ -112,13 +112,51 @@ export default function TrackOrder() {
                 Current Status: {
                   order.status === 'delivered' ? 'Delivered' :
                   order.status === 'shipped' ? 'Packed & Shipped' :
-                  order.status === 'made' ? 'Being Made' : 
+                  order.status === 'made' ? 'Made by Us' : 
                   'Order Placed'
                 }
               </div>
             </div>
- 
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', position: 'relative', maxWidth: 540, margin: '0 auto' }}>
+
+            {/* ITEM LIST */}
+            <div style={{ marginBottom: 48 }}>
+              <div className="section-eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, fontFamily: 'EB Garamond, serif', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9B6070' }}>
+                <div style={{ flex: 1, height: '0.5px', background: '#EDD0D6' }}></div>
+                ✦ &nbsp; your pieces &nbsp; ✦
+                <div style={{ flex: 1, height: '0.5px', background: '#EDD0D6' }}></div>
+              </div>
+
+              {order.items?.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 0', borderBottom: '0.5px solid #F5E0E6' }}>
+                  <div style={{ width: 60, height: 60, borderRadius: 12, background: item.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                    {item.image ? (
+                      <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <span style={{ fontSize: 24 }}>✦</span>
+                    )}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 18, color: '#1A0509', marginBottom: 2 }}>{item.name}</div>
+                    <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, color: '#9B6070' }}>{item.selectedOption && `${item.selectedOption.name} · `}qty {item.qty || item.quantity}</div>
+                  </div>
+                  <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 18, color: '#6B1A2E' }}>Rs {item.price * (item.qty || item.quantity || 1)}</div>
+                </div>
+              ))}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingTop: 24, borderTop: '0.5px solid #EDD0D6', marginTop: 12 }}>
+                <span style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#9B6070' }}>TOTAL PAID</span>
+                <span style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 32, color: '#1A0509' }}>Rs {order.total}</span>
+              </div>
+            </div>
+
+            {/* TRACKER */}
+            <div style={{ padding: '32px 0 0' }}>
+              <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#9B6070', textAlign: 'center', marginBottom: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+                <div style={{ width: 20, height: '0.5px', background: '#C47080', opacity: 0.4 }}></div>
+                ✦ &nbsp; your order journey &nbsp; ✦
+                <div style={{ width: 20, height: '0.5px', background: '#C47080', opacity: 0.4 }}></div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', position: 'relative', maxWidth: 540, margin: '0 auto' }}>
               <div style={{ position: 'absolute', top: 18, left: '12.5%', right: '12.5%', height: '1px', background: '#EDD0D6', zIndex: 0 }}></div>
               
               {/* Progress Line */}
@@ -189,6 +227,7 @@ export default function TrackOrder() {
                 );
               })}
             </div>
+          </div>
           </div>
         </div>
       )}

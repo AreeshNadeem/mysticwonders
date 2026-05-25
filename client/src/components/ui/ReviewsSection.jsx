@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, getDocs, orderBy, query, limit } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { T } from '../../lib/constants';
 
@@ -40,19 +40,22 @@ export default function ReviewsSection() {
   ];
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'), limit(12));
-        const snap = await getDocs(q);
+    const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'), limit(12));
+    
+    const unsubscribe = onSnapshot(q, 
+      (snap) => {
         const fetched = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        setReviews(fetched.length >= 2 ? fetched : fallbackReviews);
-      } catch {
+        setReviews(fetched.length > 0 ? fetched : fallbackReviews);
+        setLoading(false);
+      },
+      (err) => {
+        console.error('Global reviews listener error:', err);
         setReviews(fallbackReviews);
-      } finally {
         setLoading(false);
       }
-    };
-    fetchReviews();
+    );
+
+    return () => unsubscribe();
   }, []);
 
   // Auto-cycle through reviews
@@ -137,7 +140,7 @@ export default function ReviewsSection() {
 
                     {/* Author */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <Avatar name={review.name} image={review.photoUrl} />
+                      <Avatar name={review.name} image={review.image} />
                       <div>
                         <div className="playfair" style={{ fontSize: 15, color: '#F7D6DC', fontStyle: 'italic' }}>{review.name}</div>
                         {review.productName && <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 12, color: '#9B6070', letterSpacing: '0.05em' }}>purchased · {review.productName}</div>}

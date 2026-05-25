@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { T } from '../lib/constants';
 import Navbar from '../components/layout/Navbar';
 import useCartStore    from '../store/cartStore';
@@ -20,16 +21,36 @@ export default function ProductDetail() {
   
   const p = products.find((x) => String(x.id) === String(id));
   const [open, setOpen] = useState(null);
+  const [activeImg, setActiveImg] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const addItem  = useCartStore((s) => s.addItem);
   const toggle   = useWishlistStore((s) => s.toggle);
   const isSaved  = useWishlistStore((s) => s.isSaved(p?.id));
 
+  useEffect(() => {
+    if (p && p.options?.length > 0) {
+      setSelectedOption(p.options[0]);
+    } else {
+      setSelectedOption(null);
+    }
+  }, [p]);
+
   if (loading) return <div style={{ height: '100vh', background: T.cream, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
   if (!p) return <div style={{ height: '100vh', background: T.cream, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => navigate('/shop')}>Product not found. Return to shop?</div>;
 
+  const currentPrice = selectedOption ? selectedOption.price : p.price;
+  const pImages = p.images?.length > 0 ? p.images : [p.image].filter(Boolean);
+
   const handleAdd = () => {
-    if (!p.soldOut) addItem(p);
+    if (!p.soldOut) {
+      addItem({
+        ...p,
+        image: pImages[0] || null,
+        price: currentPrice,
+        selectedOption
+      });
+    }
   };
 
   return (
@@ -40,20 +61,49 @@ export default function ProductDetail() {
         <div style={{ padding: '0 20px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: 'clamp(40px, 5vw, 80px)', alignItems: 'start' }}>
             
-            {/* Hero image - Enlarged */}
-            <div style={{ width: '100%', aspectRatio: '1', background: `linear-gradient(160deg, ${p.bg} 0%, #EDD0D6 55%, #E4C0CA 100%)`, borderRadius: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 50px rgba(107, 26, 46, 0.08)' }}>
-              {p.image ? (
-                <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ fontSize: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{ opacity: 0.15, fontSize: 160, color: T.burgundy }}>✦</div>
-                  {p.emoji}
+            {/* Image Gallery */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div style={{ width: '100%', aspectRatio: '1', background: `linear-gradient(160deg, ${p.bg} 0%, #EDD0D6 55%, #E4C0CA 100%)`, borderRadius: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 50px rgba(107, 26, 46, 0.08)' }}>
+                <AnimatePresence mode="wait">
+                  <motion.img 
+                    key={activeImg}
+                    src={pImages[activeImg]} 
+                    alt={p.name} 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                </AnimatePresence>
+                
+                {pImages.length > 1 && (
+                  <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8 }}>
+                    {pImages.map((_, i) => (
+                      <div 
+                        key={i} 
+                        onClick={() => setActiveImg(i)}
+                        style={{ width: 8, height: 8, borderRadius: '50%', background: i === activeImg ? T.burgundy : 'rgba(255,255,255,0.5)', cursor: 'pointer', transition: 'all 0.2s' }} 
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Thumbnails */}
+              {pImages.length > 1 && (
+                <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 10 }}>
+                  {pImages.map((img, i) => (
+                    <div 
+                      key={i} 
+                      onClick={() => setActiveImg(i)}
+                      style={{ width: 80, height: 80, borderRadius: 12, overflow: 'hidden', border: i === activeImg ? `2px solid ${T.burgundy}` : '2px solid transparent', cursor: 'pointer', flexShrink: 0 }}
+                    >
+                      <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  ))}
                 </div>
               )}
-              <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} viewBox="0 0 390 360" fill="none">
-                <circle cx="360" cy="30" r="80" stroke="#D4919F" strokeWidth="0.5" opacity="0.4"/>
-                <circle cx="30" cy="320" r="60" stroke="#D4919F" strokeWidth="0.4" opacity="0.3"/>
-              </svg>
             </div>
 
             {/* Product Info */}
@@ -75,9 +125,32 @@ export default function ProductDetail() {
               </p>
 
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 32 }}>
-                <span className="playfair" style={{ fontSize: 34, color: T.burgundy }}>Rs {p.price}</span>
+                <span className="playfair" style={{ fontSize: 34, color: T.burgundy }}>Rs {currentPrice}</span>
                 {p.stock && <span style={{ fontFamily: 'EB Garamond, serif', fontSize: 15, color: T.textMuted, fontStyle: 'italic' }}>· only {p.stock} left in stock</span>}
               </div>
+
+              {/* Options Selector */}
+              {p.options?.length > 0 && (
+                <div style={{ marginBottom: 32 }}>
+                  <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 11, letterSpacing: '0.2em', color: T.textAccent, textTransform: 'uppercase', marginBottom: 12 }}>Choose your magic</div>
+                  <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                    {p.options.map((opt) => (
+                      <button
+                        key={opt.name}
+                        onClick={() => setSelectedOption(opt)}
+                        style={{
+                          padding: '10px 20px', borderRadius: 20, border: selectedOption?.name === opt.name ? `1px solid ${T.burgundy}` : '1px solid #EDD0D6',
+                          background: selectedOption?.name === opt.name ? '#FFF7F8' : 'transparent',
+                          color: selectedOption?.name === opt.name ? T.burgundy : T.textMuted,
+                          fontFamily: 'EB Garamond, serif', fontSize: 15, cursor: 'pointer', transition: 'all 0.2s'
+                        }}
+                      >
+                        {opt.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Inspiration */}
               {p.inspiration && (
@@ -89,10 +162,14 @@ export default function ProductDetail() {
 
               {/* CTAs */}
               <div style={{ display: 'flex', gap: 12, marginBottom: 40 }}>
-                <button className="btn-primary hover-scale" style={{ flex: 2, padding: '12px' }} onClick={() => { handleAdd(); }}>
-                  ✦ &nbsp; Add to bag
+                <button className="btn-primary" 
+                   style={{ flex: 2, padding: '14px', borderRadius: 30, opacity: p.soldOut ? 0.6 : 1 }} 
+                   disabled={p.soldOut}
+                   onClick={handleAdd}
+                >
+                  {p.soldOut ? 'Sold Out' : '✦ Add to bag'}
                 </button>
-                <button className="btn-outline" style={{ flex: 1, padding: '12px' }} onClick={() => toggle(p)}>
+                <button className="btn-outline" style={{ flex: 1, padding: '14px', borderRadius: 30 }} onClick={() => toggle(p)}>
                   {isSaved ? '♥ Saved' : '♡ Save'}
                 </button>
               </div>
@@ -132,8 +209,8 @@ export default function ProductDetail() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 24 }}>
               {products.filter((x) => x.id !== p.id).slice(0, 4).map((r) => (
                 <div key={r.id} className="mini-card shadow-sm" onClick={() => navigate(`/shop/${r.id}`)}>
-                  <div style={{ width: '100%', aspectRatio: 1, background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 44, overflow: 'hidden' }}>
-                    {r.image ? <img src={r.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : r.emoji}
+                  <div style={{ width: '100%', aspectRatio: 1, background: r.bg || '#FDEEF2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    {r.images?.[0] || r.image ? <img src={r.images?.[0] || r.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 44 }}>✦</span>}
                   </div>
                   <div style={{ padding: '20px' }}>
                     <div className="playfair" style={{ fontStyle: 'italic', fontSize: 18, color: T.burgundyDeep, marginBottom: 4, lineHeight: 1.2 }}>{r.name}</div>

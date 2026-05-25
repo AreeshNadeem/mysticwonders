@@ -136,7 +136,13 @@ export default function OrderPlaced() {
 
             {items.map((item, idx) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 0', borderBottom: '0.5px solid #F5E0E6' }}>
-                <div style={{ width: 52, height: 52, borderRadius: 10, background: item.bg || '#F5E0E6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>{item.emoji || '✨'}</div>
+                <div style={{ width: 52, height: 52, borderRadius: 10, background: item.bg || '#F5E0E6', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                  {item.image ? (
+                    <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ fontSize: 22 }}>✦</span>
+                  )}
+                </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 17, color: '#1A0509', marginBottom: 2 }}>{item.name}</div>
                   <div style={{ fontFamily: 'EB Garamond, serif', fontSize: 13, color: '#9B6070' }}>{item.tags?.join(' · ')} · qty {item.qty}</div>
